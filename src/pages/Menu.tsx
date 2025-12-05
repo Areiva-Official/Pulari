@@ -9,6 +9,36 @@ import samosaImage from '../assets/gallery/samosa.jpg';
 import meduVadaImage from '../assets/gallery/medu vada.jpg';
 import masalaOmeletteImage from '../assets/gallery/masala omlette.jpg';
 import kottayamChickenImage from '../assets/gallery/kottayam chicken fry.jpg';
+import bananaFryImage from '../assets/gallery/banana fry.jpg';
+import venaduKonchuImage from '../assets/gallery/venadu kochu fry.jpg';
+import gheeRoastImage from '../assets/gallery/ghee roast.jpg';
+import masalaDosaImage from '../assets/gallery/masala dosa.jpg';
+import setDosaImage from '../assets/gallery/set dosa.jpg';
+import mylaporeEggImage from '../assets/gallery/MYLAPOR EGG ROAST.jpg';
+import houseBoatFishImage from '../assets/gallery/HOUSE BOAT FISH CURRY.jpg';
+import nadanPothuRoastImage from '../assets/gallery/NADAN POTHU ROAST.jpg';
+import hiRangeBeefImage from '../assets/gallery/HI RANGE BEEF ULARTHIYATHU.jpg';
+import veetileKozhiImage from '../assets/gallery/VEETTILE KOZHI CURRY.jpg';
+import konchuMangoImage from '../assets/gallery/KONCHU MANGO CURRY.jpg';
+import malabarChickenImage from '../assets/gallery/MALABAR CHICKEN BIRIYANI.jpg';
+import malabarBeefImage from '../assets/gallery/MALABAR BEEF BIRIYANI.jpg';
+import kappaBiriyaniImage from '../assets/gallery/KAPPA BIRIYANI.jpg';
+import kappaPuzhukuImage from '../assets/gallery/KAPPA PUZHUKKU.jpg';
+import butterChickenImage from '../assets/gallery/OLD DELHI STYLE BUTTER CHICKEN.jpg';
+import paneerButterImage from '../assets/gallery/PANEER BUTTER MASALA.jpg';
+import keralaParathaImage from '../assets/gallery/KERALA PARATHA.jpg';
+import appamImage from '../assets/gallery/APPAM.jpg';
+import butterNaanImage from '../assets/gallery/BUTTER NAAN.jpg';
+import neyyChoruImage from '../assets/gallery/NEYY CHORU.jpg';
+import steamRiceImage from '../assets/gallery/STEAM RICE.jpg';
+import pulaoRiceImage from '../assets/gallery/PULAO RICE.jpg';
+import raitaImage from '../assets/gallery/RAITA.jpg';
+import mangoLassiImage from '../assets/gallery/MANGO LASSI.jpg';
+import gulabJamunImage from '../assets/gallery/GULAB JAMUN.jpg';
+import nadanChaiImage from '../assets/gallery/NADAN CHAI.jpg';
+import masalaTeaImage from '../assets/gallery/MASALA TEA.jpg';
+import cardamomTeaImage from '../assets/gallery/CARDAMOM TEA.jpg';
+import filterCoffeeImage from '../assets/gallery/FILTER COFFEE.jpg';
 
 interface MenuItem {
   id: string;
@@ -175,7 +205,7 @@ export default function Menu() {
           name: 'BANANA FRY',
           description: 'Traditional street food banana fritters that is crispy and golden on the outside while soft and mushy once fried (1, 10)',
           price: 5.99,
-          image_url: '',
+          image_url: bananaFryImage,
           is_vegetarian: true,
           is_vegan: false,
           is_gluten_free: false,
@@ -185,7 +215,7 @@ export default function Menu() {
           name: 'VENADU KONCHU FRY',
           description: 'Prawn made with hand pounded spices, onions, ginger and garlic (1,2,10,prawns)',
           price: 7.99,
-          image_url: '',
+          image_url: venaduKonchuImage,
           is_vegetarian: false,
           is_vegan: false,
           is_gluten_free: false,
@@ -202,7 +232,7 @@ export default function Menu() {
           name: 'GHEE ROAST',
           description: 'Crispy dosa roasted with ghee (7, 10)',
           price: 11.50,
-          image_url: '',
+          image_url: gheeRoastImage,
           is_vegetarian: true,
           is_vegan: false,
           is_gluten_free: false,
@@ -212,7 +242,7 @@ export default function Menu() {
           name: 'MASALA DOSA',
           description: 'Crispy rice crepe filled with spiced potato masala (7, 10)',
           price: 11.99,
-          image_url: '',
+          image_url: masalaDosaImage,
           is_vegetarian: true,
           is_vegan: false,
           is_gluten_free: false,
@@ -222,7 +252,7 @@ export default function Menu() {
           name: 'SET DOSA',
           description: 'Soft, fluffy dosas served in a set (7, 10)',
           price: 11.50,
-          image_url: '',
+          image_url: setDosaImage,
           is_vegetarian: true,
           is_vegan: false,
           is_gluten_free: false,
@@ -239,7 +269,7 @@ export default function Menu() {
           name: 'MYLAPOR EGG ROAST',
           description: 'Hard boiled eggs cooked with thin sliced onions, tomatoes and hand pounded spices (1,3, 10)',
           price: 11.99,
-          image_url: '',
+          image_url: mylaporeEggImage,
           is_vegetarian: true,
           is_vegan: false,
           is_gluten_free: false,
@@ -249,7 +279,7 @@ export default function Menu() {
           name: 'HOUSE BOAT FISH CURRY',
           description: 'Fresh fish cooked with Kashmiri chillies, turmeric, tamarind, and Kerala kudampuli for a special spicy tang (2, 4)',
           price: 12.99,
-          image_url: '',
+          image_url: houseBoatFishImage,
           is_vegetarian: false,
           is_vegan: false,
           is_gluten_free: false,
@@ -259,7 +289,7 @@ export default function Menu() {
           name: 'NADAN POTHU ROAST',
           description: 'Traditional Kerala style beef made with curry leaves, black pepper, fennel seeds and spices (1, 10)',
           price: 13.99,
-          image_url: '',
+          image_url: nadanPothuRoastImage,
           is_vegetarian: false,
           is_vegan: false,
           is_gluten_free: false,
@@ -269,7 +299,7 @@ export default function Menu() {
           name: 'HI RANGE BEEF ULARTHIYATHU',
           description: 'Classic beef fry dish, cooked in the traditional Toddy shop way. Slow cooked beef with onions and spicy Kerala masala (10)',
           price: 13.99,
-          image_url: '',
+          image_url: hiRangeBeefImage,
           is_vegetarian: false,
           is_vegan: false,
           is_gluten_free: false,
@@ -279,7 +309,7 @@ export default function Menu() {
           name: 'VEETTILE KOZHI CURRY',
           description: 'Authentic Kerala dish. On the bone chicken cooked with black pepper, coriander, cinnamon, and cloves (10)',
           price: 11.99,
-          image_url: '',
+          image_url: veetileKozhiImage,
           is_vegetarian: false,
           is_vegan: false,
           is_gluten_free: false,
@@ -289,7 +319,7 @@ export default function Menu() {
           name: 'KONCHU MANGO CURRY',
           description: 'Made with prawns, coconut, pearl onions and sour mangoes (2,10,prawns)',
           price: 14.99,
-          image_url: '',
+          image_url: konchuMangoImage,
           is_vegetarian: false,
           is_vegan: false,
           is_gluten_free: false,
@@ -299,7 +329,7 @@ export default function Menu() {
           name: 'MALABAR CHICKEN BIRIYANI',
           description: 'Aged, fragrantly flavored rice blends perfectly with chicken cooked to tenderness (7,8)',
           price: 13.50,
-          image_url: '',
+          image_url: malabarChickenImage,
           is_vegetarian: false,
           is_vegan: false,
           is_gluten_free: false,
@@ -309,7 +339,7 @@ export default function Menu() {
           name: 'MALABAR BEEF BIRIYANI',
           description: 'Cooked in the traditional Malabar Weddings style. Made with beef and signature spices (7,8)',
           price: 13.99,
-          image_url: '',
+          image_url: malabarBeefImage,
           is_vegetarian: false,
           is_vegan: false,
           is_gluten_free: false,
@@ -319,7 +349,7 @@ export default function Menu() {
           name: 'KAPPA BIRIYANI',
           description: 'A Kerala dish with Tapioca, beef and spices (7,8)',
           price: 12.50,
-          image_url: '',
+          image_url: kappaBiriyaniImage,
           is_vegetarian: false,
           is_vegan: false,
           is_gluten_free: false,
@@ -329,7 +359,7 @@ export default function Menu() {
           name: 'KAPPA PUZHUKKU',
           description: 'A Kerala dish cooked with Tapioca, beef and spices (7,8)',
           price: 7.99,
-          image_url: '',
+          image_url: kappaPuzhukuImage,
           is_vegetarian: false,
           is_vegan: false,
           is_gluten_free: false,
@@ -339,7 +369,7 @@ export default function Menu() {
           name: 'OLD DELHI STYLE BUTTER CHICKEN',
           description: 'Traditional dish made from chicken tikka cooked with onion and tomato sauce, finished with fenugreek, fresh cream, honey and butter (7)',
           price: 14.99,
-          image_url: '',
+          image_url: butterChickenImage,
           is_vegetarian: false,
           is_vegan: false,
           is_gluten_free: false,
@@ -349,7 +379,7 @@ export default function Menu() {
           name: 'PANEER BUTTER MASALA',
           description: 'Grilled cubes of cottage cheese cooked in a rich and creamy tomato sauce infused with aromatic spices (7)',
           price: 13.99,
-          image_url: '',
+          image_url: paneerButterImage,
           is_vegetarian: true,
           is_vegan: false,
           is_gluten_free: false,
@@ -366,7 +396,7 @@ export default function Menu() {
           name: 'KERALA PARATHA',
           description: 'Layered flatbread',
           price: 2.99,
-          image_url: '',
+          image_url: keralaParathaImage,
           is_vegetarian: true,
           is_vegan: false,
           is_gluten_free: false,
@@ -376,7 +406,7 @@ export default function Menu() {
           name: 'APPAM',
           description: 'Traditional rice pancake',
           price: 2.50,
-          image_url: '',
+          image_url: appamImage,
           is_vegetarian: true,
           is_vegan: true,
           is_gluten_free: true,
@@ -386,7 +416,7 @@ export default function Menu() {
           name: 'BUTTER NAAN',
           description: 'Soft leavened bread with butter',
           price: 3.50,
-          image_url: '',
+          image_url: butterNaanImage,
           is_vegetarian: true,
           is_vegan: false,
           is_gluten_free: false,
@@ -396,7 +426,7 @@ export default function Menu() {
           name: 'NEYY CHORU',
           description: 'Ghee rice',
           price: 4.50,
-          image_url: '',
+          image_url: neyyChoruImage,
           is_vegetarian: true,
           is_vegan: false,
           is_gluten_free: true,
@@ -406,7 +436,7 @@ export default function Menu() {
           name: 'STEAM RICE',
           description: 'Steamed basmati rice',
           price: 3.50,
-          image_url: '',
+          image_url: steamRiceImage,
           is_vegetarian: true,
           is_vegan: true,
           is_gluten_free: true,
@@ -416,7 +446,7 @@ export default function Menu() {
           name: 'PULAO RICE',
           description: 'Fragrant spiced rice',
           price: 3.99,
-          image_url: '',
+          image_url: pulaoRiceImage,
           is_vegetarian: true,
           is_vegan: false,
           is_gluten_free: true,
@@ -426,7 +456,7 @@ export default function Menu() {
           name: 'RAITA',
           description: 'Yogurt with cucumber and spices',
           price: 3.00,
-          image_url: '',
+          image_url: raitaImage,
           is_vegetarian: true,
           is_vegan: false,
           is_gluten_free: true,
@@ -443,7 +473,7 @@ export default function Menu() {
           name: 'MANGO LASSI',
           description: 'Refreshing mango yogurt drink',
           price: 3.50,
-          image_url: '',
+          image_url: mangoLassiImage,
           is_vegetarian: true,
           is_vegan: false,
           is_gluten_free: true,
@@ -453,7 +483,7 @@ export default function Menu() {
           name: 'GULAB JAMUN',
           description: 'Traditional Indian sweet dumplings in syrup',
           price: 4.00,
-          image_url: '',
+          image_url: gulabJamunImage,
           is_vegetarian: true,
           is_vegan: false,
           is_gluten_free: false,
@@ -463,7 +493,7 @@ export default function Menu() {
           name: 'NADAN CHAI',
           description: 'Traditional Kerala tea',
           price: 3.00,
-          image_url: '',
+          image_url: nadanChaiImage,
           is_vegetarian: true,
           is_vegan: false,
           is_gluten_free: true,
@@ -473,7 +503,7 @@ export default function Menu() {
           name: 'MASALA TEA',
           description: 'Spiced Indian tea',
           price: 3.00,
-          image_url: '',
+          image_url: masalaTeaImage,
           is_vegetarian: true,
           is_vegan: false,
           is_gluten_free: true,
@@ -483,7 +513,7 @@ export default function Menu() {
           name: 'CARDAMOM TEA',
           description: 'Aromatic cardamom infused tea',
           price: 3.00,
-          image_url: '',
+          image_url: cardamomTeaImage,
           is_vegetarian: true,
           is_vegan: false,
           is_gluten_free: true,
@@ -493,7 +523,7 @@ export default function Menu() {
           name: 'FILTER COFFEE',
           description: 'Traditional South Indian filter coffee',
           price: 3.00,
-          image_url: '',
+          image_url: filterCoffeeImage,
           is_vegetarian: true,
           is_vegan: false,
           is_gluten_free: true,
