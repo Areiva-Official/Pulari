@@ -26,10 +26,10 @@ export default function Home({ onNavigate }: HomeProps) {
             Experience Dublin's Finest Cuisine
           </p>
           <button
-            onClick={() => onNavigate('reservations')}
+            onClick={() => onNavigate('menu')}
             className="bg-amber-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:bg-amber-700 transform hover:scale-105 transition-all duration-300 animate-fade-in-delay"
           >
-            Book a Table
+            Explore Our Menu
           </button>
         </div>
       </section>
@@ -180,13 +180,13 @@ export default function Home({ onNavigate }: HomeProps) {
         <div className="relative z-10 text-center text-white px-4">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 animate-fade-in">Ready to Dine With Us?</h2>
           <p className="text-lg sm:text-xl mb-6 sm:mb-8 animate-fade-in-delay">
-            Reserve your table today and experience culinary excellence
+            Contact us today to place your order or learn more
           </p>
           <button
-            onClick={() => onNavigate('reservations')}
+            onClick={() => onNavigate('contact')}
             className="bg-amber-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:bg-amber-700 transform hover:scale-105 transition-all duration-300 animate-fade-in-delay"
           >
-            Make a Reservation
+            Get in Touch
           </button>
         </div>
       </section>

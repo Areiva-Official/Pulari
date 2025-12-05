@@ -5,10 +5,7 @@ import Navigation from './components/Navigation';
 import Home from './pages/Home';
 import About from './pages/About';
 import Menu from './pages/Menu';
-import Reservations from './pages/Reservations';
 import Gallery from './pages/Gallery';
-import Events from './pages/Events';
-import Reviews from './pages/Reviews';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Account from './pages/Account';
@@ -30,14 +27,8 @@ function App() {
         return <About />;
       case 'menu':
         return <Menu />;
-      case 'reservations':
-        return <Reservations onNavigate={setCurrentPage} />;
       case 'gallery':
         return <Gallery />;
-      case 'events':
-        return <Events />;
-      case 'reviews':
-        return <Reviews onNavigate={setCurrentPage} />;
       case 'contact':
         return <Contact />;
       case 'login':
@@ -80,13 +71,13 @@ function App() {
                     </button>
                   </li>
                   <li>
-                    <button onClick={() => setCurrentPage('reservations')} className="text-gray-400 hover:text-white transition-colors">
-                      Reservations
+                    <button onClick={() => setCurrentPage('gallery')} className="text-gray-400 hover:text-white transition-colors">
+                      Gallery
                     </button>
                   </li>
                   <li>
-                    <button onClick={() => setCurrentPage('events')} className="text-gray-400 hover:text-white transition-colors">
-                      Events
+                    <button onClick={() => setCurrentPage('contact')} className="text-gray-400 hover:text-white transition-colors">
+                      Contact
                     </button>
                   </li>
                 </ul>

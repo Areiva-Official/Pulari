@@ -27,10 +27,7 @@ export default function Navigation({ currentPage, onNavigate }: NavigationProps)
     { name: 'Home', path: 'home' },
     { name: 'About', path: 'about' },
     { name: 'Menu', path: 'menu' },
-    { name: 'Reservations', path: 'reservations' },
     { name: 'Gallery', path: 'gallery' },
-    { name: 'Events', path: 'events' },
-    { name: 'Reviews', path: 'reviews' },
     { name: 'Contact', path: 'contact' },
   ];
 
