@@ -10,6 +10,7 @@ import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Account from './pages/Account';
 import Cart from './pages/Cart';
+import { MessageCircle } from 'lucide-react';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -18,6 +19,13 @@ function App() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPage]);
+
+  const handleWhatsAppChat = () => {
+    // Format phone number for WhatsApp (remove spaces and add country code)
+    const phoneNumber = '353879738186'; // Ireland country code 353 + 0879738186
+    const message = encodeURIComponent('Hello! I would like to inquire about your menu.');
+    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+  };
 
   const renderPage = () => {
     switch (currentPage) {
@@ -104,6 +112,18 @@ function App() {
             </div>
           </div>
         </footer>
+
+        {/* Floating Chat Button */}
+        <button
+          onClick={handleWhatsAppChat}
+          className="fixed bottom-6 right-6 bg-gradient-to-r from-amber-600 to-amber-700 text-white p-4 rounded-full shadow-2xl hover:from-amber-700 hover:to-amber-800 transform hover:scale-110 transition-all duration-300 z-50 group"
+          aria-label="Chat with us"
+        >
+          <MessageCircle size={28} className="animate-pulse group-hover:animate-none" />
+          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center animate-bounce">
+            1
+          </span>
+        </button>
         </div>
       </CartProvider>
     </AuthProvider>
