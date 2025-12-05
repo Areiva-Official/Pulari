@@ -139,14 +139,30 @@ export default function Navigation({ currentPage, onNavigate }: NavigationProps)
             )}
           </div>
 
-          <button
-            className={`lg:hidden p-2 rounded-lg transition-colors duration-300 ${
-              isScrolled ? 'text-gray-700 hover:bg-gray-100' : 'text-white hover:bg-white/10'
-            }`}
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Mobile Cart and Menu Icons */}
+          <div className="lg:hidden flex items-center gap-3">
+            <button
+              onClick={() => onNavigate('cart')}
+              className={`relative p-2 rounded-lg transition-colors duration-300 ${
+                isScrolled ? 'text-gray-700 hover:bg-gray-100' : 'text-white hover:bg-white/10'
+              }`}
+            >
+              <ShoppingCart size={24} />
+              {getCartCount() > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                  {getCartCount()}
+                </span>
+              )}
+            </button>
+            <button
+              className={`p-2 rounded-lg transition-colors duration-300 ${
+                isScrolled ? 'text-gray-700 hover:bg-gray-100' : 'text-white hover:bg-white/10'
+              }`}
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
       </div>
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Leaf, Wheat, ShoppingCart, Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
@@ -33,7 +34,8 @@ export default function Menu() {
   const [addedItems, setAddedItems] = useState<Set<string>>(new Set());
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
-  const { addToCart } = useCart();
+  const { addToCart, items: cartItems } = useCart();
+  const navigate = useNavigate();
 
   const toggleCategory = (categoryId: string) => {
     setExpandedCategories(prev => {
@@ -665,20 +667,34 @@ export default function Menu() {
                           )}
                         </div>
 
-                        {/* Add to Cart Button */}
+                        {/* Add to Cart / View Cart Button */}
                         <button
-                          onClick={() => handleAddToCart(item)}
-                          disabled={addedItems.has(item.id)}
+                          onClick={() => {
+                            const isInCart = cartItems.some(cartItem => cartItem.id === item.id);
+                            if (isInCart) {
+                              navigate('/cart');
+                            } else {
+                              handleAddToCart(item);
+                            }
+                          }}
+                          disabled={addedItems.has(item.id) && !cartItems.some(cartItem => cartItem.id === item.id)}
                           className={`mt-4 w-full sm:w-auto flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-bold text-sm sm:text-base transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 ${
-                            addedItems.has(item.id)
+                            addedItems.has(item.id) && !cartItems.some(cartItem => cartItem.id === item.id)
                               ? 'bg-green-500 text-white cursor-not-allowed'
+                              : cartItems.some(cartItem => cartItem.id === item.id)
+                              ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800'
                               : 'bg-gradient-to-r from-amber-600 to-amber-700 text-white hover:from-amber-700 hover:to-amber-800'
                           }`}
                         >
-                          {addedItems.has(item.id) ? (
+                          {addedItems.has(item.id) && !cartItems.some(cartItem => cartItem.id === item.id) ? (
                             <>
                               <Check size={18} className="animate-bounce" />
                               Added to Cart
+                            </>
+                          ) : cartItems.some(cartItem => cartItem.id === item.id) ? (
+                            <>
+                              <ShoppingCart size={18} />
+                              View Cart
                             </>
                           ) : (
                             <>
