@@ -559,24 +559,23 @@ export default function Menu() {
                   </div>
                   
                   {/* Mobile: Clickable header */}
-                  <button
-                    onClick={() => toggleCategory(category.id)}
-                    className="lg:pointer-events-none w-full lg:cursor-default"
-                  >
-                    <div className="flex items-center justify-center gap-2 lg:block">
-                      <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-700 via-amber-600 to-amber-700 bg-clip-text text-transparent mb-3 sm:mb-4 tracking-tight px-4">
-                        {category.name}
-                      </h2>
-                      {/* Chevron icon - only visible on mobile */}
-                      <div className="lg:hidden">
-                        {expandedCategories.has(category.id) ? (
-                          <ChevronUp className="text-amber-600" size={24} />
-                        ) : (
-                          <ChevronDown className="text-amber-600" size={24} />
-                        )}
-                      </div>
-                    </div>
-                  </button>
+                  <div className="flex items-center justify-center gap-2 lg:block">
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-700 via-amber-600 to-amber-700 bg-clip-text text-transparent mb-3 sm:mb-4 tracking-tight px-4 lg:cursor-default">
+                      {category.name}
+                    </h2>
+                    {/* Chevron icon - only visible on mobile, clickable button */}
+                    <button
+                      onClick={() => toggleCategory(category.id)}
+                      className="lg:hidden p-2 hover:bg-amber-50 rounded-full transition-colors"
+                      aria-label={expandedCategories.has(category.id) ? 'Collapse category' : 'Expand category'}
+                    >
+                      {expandedCategories.has(category.id) ? (
+                        <ChevronUp className="text-amber-600" size={24} />
+                      ) : (
+                        <ChevronDown className="text-amber-600" size={24} />
+                      )}
+                    </button>
+                  </div>
                   
                   <p className="text-base sm:text-lg md:text-xl text-gray-600 italic font-light px-4">{category.description}</p>
                   <div className="mt-3 sm:mt-4 flex justify-center gap-2">
