@@ -8,31 +8,31 @@ export default function Home({ onNavigate }: HomeProps) {
   return (
     <div className="min-h-screen">
       <section
-        className="relative h-screen flex items-center justify-center bg-cover bg-center"
+        className="relative min-h-screen flex items-center justify-center bg-cover bg-center"
         style={{
           backgroundImage: 'url(https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg?auto=compress&cs=tinysrgb&w=1920)',
         }}
       >
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="relative z-10 text-center text-white px-4 animate-fade-in">
-          <h1 className="text-6xl md:text-8xl font-bold mb-6 animate-slide-up">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-4 sm:mb-6 animate-slide-up">
             PULARI
           </h1>
-          <p className="text-2xl md:text-3xl mb-8 animate-slide-up-delay">
+          <p className="text-xl sm:text-2xl md:text-3xl mb-6 sm:mb-8 animate-slide-up-delay">
             Experience Dublin's Finest Cuisine
           </p>
           <button
             onClick={() => onNavigate('reservations')}
-            className="bg-amber-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-amber-700 transform hover:scale-105 transition-all duration-300 animate-fade-in-delay"
+            className="bg-amber-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:bg-amber-700 transform hover:scale-105 transition-all duration-300 animate-fade-in-delay"
           >
             Book a Table
           </button>
         </div>
       </section>
 
-      <section className="py-20 bg-white">
+      <section className="py-12 sm:py-16 md:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {[
               {
                 icon: <ChefHat size={48} />,
@@ -61,33 +61,33 @@ export default function Home({ onNavigate }: HomeProps) {
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <div className="text-amber-600 flex justify-center mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-semibold mb-2 text-gray-800">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2 text-gray-800">{feature.title}</h3>
+                <p className="text-sm sm:text-base text-gray-600">{feature.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-20 bg-gray-50">
+      <section className="py-12 sm:py-16 md:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div className="animate-slide-in-left">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 items-center">
+            <div className="animate-slide-in-left order-2 md:order-1">
               <img
                 src="https://images.pexels.com/photos/1126728/pexels-photo-1126728.jpeg?auto=compress&cs=tinysrgb&w=800"
                 alt="Restaurant interior"
                 className="rounded-lg shadow-2xl"
               />
             </div>
-            <div className="animate-slide-in-right">
-              <h2 className="text-4xl font-bold mb-6 text-gray-800">Welcome to PULARI</h2>
-              <p className="text-lg text-gray-600 mb-4 leading-relaxed">
+            <div className="animate-slide-in-right order-1 md:order-2">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4 sm:mb-6 text-gray-800">Welcome to PULARI</h2>
+              <p className="text-base sm:text-lg text-gray-600 mb-4 leading-relaxed">
                 Since opening our doors in the heart of Dublin, PULARI Restaurant has been dedicated
                 to providing an unforgettable dining experience. Our commitment to using the
                 finest locally-sourced ingredients and time-honored cooking techniques has made us
                 a beloved destination for food lovers.
               </p>
-              <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+              <p className="text-base sm:text-lg text-gray-600 mb-6 leading-relaxed">
                 Whether you're celebrating a special occasion or simply enjoying a meal with
                 loved ones, our warm atmosphere and exceptional service will make your visit
                 memorable.
@@ -103,12 +103,12 @@ export default function Home({ onNavigate }: HomeProps) {
         </div>
       </section>
 
-      <section className="py-20 bg-white">
+      <section className="py-12 sm:py-16 md:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-center mb-12 text-gray-800 animate-fade-in">
+          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-8 sm:mb-12 text-gray-800 animate-fade-in">
             Featured Dishes
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
             {[
               {
                 image: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=800',
@@ -138,17 +138,17 @@ export default function Home({ onNavigate }: HomeProps) {
                   <img
                     src={dish.image}
                     alt={dish.title}
-                    className="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500"
+                    className="w-full h-48 sm:h-56 md:h-64 object-cover transform group-hover:scale-110 transition-transform duration-500"
                   />
                 </div>
-                <div className="p-6">
-                  <h3 className="text-2xl font-semibold mb-2 text-gray-800">{dish.title}</h3>
-                  <p className="text-gray-600 mb-4">{dish.description}</p>
+                <div className="p-4 sm:p-6">
+                  <h3 className="text-xl sm:text-2xl font-semibold mb-2 text-gray-800">{dish.title}</h3>
+                  <p className="text-sm sm:text-base text-gray-600 mb-4">{dish.description}</p>
                   <div className="flex justify-between items-center">
-                    <span className="text-2xl font-bold text-amber-600">{dish.price}</span>
+                    <span className="text-xl sm:text-2xl font-bold text-amber-600">{dish.price}</span>
                     <button
                       onClick={() => onNavigate('menu')}
-                      className="text-amber-600 hover:text-amber-700 font-semibold transition-colors duration-300"
+                      className="text-amber-600 hover:text-amber-700 font-semibold transition-colors duration-300 text-sm sm:text-base"
                     >
                       View Full Menu →
                     </button>
@@ -161,20 +161,20 @@ export default function Home({ onNavigate }: HomeProps) {
       </section>
 
       <section
-        className="py-32 bg-fixed bg-cover bg-center relative"
+        className="py-24 sm:py-28 md:py-32 bg-fixed bg-cover bg-center relative"
         style={{
           backgroundImage: 'url(https://images.pexels.com/photos/941861/pexels-photo-941861.jpeg?auto=compress&cs=tinysrgb&w=1920)',
         }}
       >
         <div className="absolute inset-0 bg-black opacity-60"></div>
         <div className="relative z-10 text-center text-white px-4">
-          <h2 className="text-5xl font-bold mb-6 animate-fade-in">Ready to Dine With Us?</h2>
-          <p className="text-xl mb-8 animate-fade-in-delay">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 animate-fade-in">Ready to Dine With Us?</h2>
+          <p className="text-lg sm:text-xl mb-6 sm:mb-8 animate-fade-in-delay">
             Reserve your table today and experience culinary excellence
           </p>
           <button
             onClick={() => onNavigate('reservations')}
-            className="bg-amber-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-amber-700 transform hover:scale-105 transition-all duration-300 animate-fade-in-delay"
+            className="bg-amber-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:bg-amber-700 transform hover:scale-105 transition-all duration-300 animate-fade-in-delay"
           >
             Make a Reservation
           </button>
