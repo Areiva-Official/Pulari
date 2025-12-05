@@ -1,4 +1,8 @@
 import { ChefHat, Clock, MapPin, Award } from 'lucide-react';
+import samosaImage from '../assets/gallery/samosa.jpg';
+import meduVadaImage from '../assets/gallery/medu vada.jpg';
+import masalaOmeletteImage from '../assets/gallery/masala omlette.jpg';
+import kottayamChickenImage from '../assets/gallery/kottayam chicken fry.jpg';
 
 interface HomeProps {
   onNavigate: (page: string) => void;
@@ -42,7 +46,7 @@ export default function Home({ onNavigate }: HomeProps) {
               {
                 icon: <Clock size={48} />,
                 title: 'Open Daily',
-                description: 'Monday - Sunday, 12:00 PM - 11:00 PM',
+                description: 'Monday - Sunday, 11:00 AM - 3:00 AM',
               },
               {
                 icon: <MapPin size={48} />,
@@ -108,25 +112,31 @@ export default function Home({ onNavigate }: HomeProps) {
           <h2 className="text-3xl sm:text-4xl font-bold text-center mb-8 sm:mb-12 text-gray-800 animate-fade-in">
             Featured Dishes
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {[
               {
-                image: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=800',
-                title: 'Grilled Salmon',
-                description: 'Fresh Atlantic salmon with seasonal vegetables',
-                price: '€28',
+                image: samosaImage,
+                title: 'Samosas',
+                description: 'Handmade pastry stuffed with mashed spiced potatoes, green peas served with chickpeas and chutneys',
+                price: '€4.99',
               },
               {
-                image: 'https://images.pexels.com/photos/769289/pexels-photo-769289.jpeg?auto=compress&cs=tinysrgb&w=800',
-                title: 'Ribeye Steak',
-                description: 'Premium Irish beef, cooked to perfection',
-                price: '€35',
+                image: meduVadaImage,
+                title: 'Medu Vada',
+                description: 'Authentic south Indian street food made with lentil and spices served with homemade chutney',
+                price: '€5.99',
               },
               {
-                image: 'https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=800',
-                title: 'Pasta Primavera',
-                description: 'House-made pasta with fresh garden vegetables',
-                price: '€22',
+                image: masalaOmeletteImage,
+                title: 'Nadan Masala Omelette',
+                description: 'Made with onion, turmeric and chillies - a great way to spice up brunch',
+                price: '€6.99',
+              },
+              {
+                image: kottayamChickenImage,
+                title: 'Kottayam Chicken Fry',
+                description: 'Chicken marinated with chilly, coriander, garam masala served with mixed salad leaves',
+                price: '€7.99',
               },
             ].map((dish, index) => (
               <div
