@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { Leaf, Wheat, ShoppingCart, Check } from 'lucide-react';
+import { Leaf, Wheat, ShoppingCart, Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 
 // Import menu images
@@ -31,7 +31,21 @@ export default function Menu() {
   const [categories, setCategories] = useState<MenuCategory[]>([]);
   const [loading, setLoading] = useState(false); // Set to false to use local data
   const [addedItems, setAddedItems] = useState<Set<string>>(new Set());
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
   const { addToCart } = useCart();
+
+  const toggleCategory = (categoryId: string) => {
+    setExpandedCategories(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(categoryId)) {
+        newSet.delete(categoryId);
+      } else {
+        newSet.add(categoryId);
+      }
+      return newSet;
+    });
+  };
 
   const handleAddToCart = (item: MenuItem) => {
     addToCart({
@@ -59,6 +73,21 @@ export default function Menu() {
   useEffect(() => {
     // Comment out database loading for now, using local menu data
     // loadMenu();
+    
+    // Handle responsive behavior for category expansion
+    const handleResize = () => {
+      const desktop = window.innerWidth >= 1024;
+      setIsDesktop(desktop);
+      if (desktop) {
+        setExpandedCategories(new Set(['1', '2', '3', '4', '5']));
+      } else {
+        setExpandedCategories(new Set());
+      }
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const loadMenu = async () => {
@@ -513,7 +542,7 @@ export default function Menu() {
         ) : (
           displayMenu.map((category, categoryIndex) => (
             <div key={category.id} className="mb-16 sm:mb-20 md:mb-24" style={{ animationDelay: `${categoryIndex * 200}ms` }}>
-              {/* Category Header with Decorative Elements */}
+              {/* Category Header - Clickable on Mobile */}
               <div className="text-center mb-10 sm:mb-12 md:mb-16 relative">
                 <div className="absolute inset-0 flex items-center justify-center opacity-10">
                   <div className="w-full h-24 sm:h-32 bg-gradient-to-r from-transparent via-amber-300 to-transparent blur-3xl"></div>
@@ -526,9 +555,27 @@ export default function Menu() {
                       <div className="h-px w-8 sm:w-12 md:w-16 bg-gradient-to-l from-transparent to-amber-500"></div>
                     </div>
                   </div>
-                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-700 via-amber-600 to-amber-700 bg-clip-text text-transparent mb-3 sm:mb-4 tracking-tight px-4">
-                    {category.name}
-                  </h2>
+                  
+                  {/* Mobile: Clickable header */}
+                  <button
+                    onClick={() => toggleCategory(category.id)}
+                    className="lg:pointer-events-none w-full lg:cursor-default"
+                  >
+                    <div className="flex items-center justify-center gap-2 lg:block">
+                      <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-700 via-amber-600 to-amber-700 bg-clip-text text-transparent mb-3 sm:mb-4 tracking-tight px-4">
+                        {category.name}
+                      </h2>
+                      {/* Chevron icon - only visible on mobile */}
+                      <div className="lg:hidden">
+                        {expandedCategories.has(category.id) ? (
+                          <ChevronUp className="text-amber-600" size={24} />
+                        ) : (
+                          <ChevronDown className="text-amber-600" size={24} />
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                  
                   <p className="text-base sm:text-lg md:text-xl text-gray-600 italic font-light px-4">{category.description}</p>
                   <div className="mt-3 sm:mt-4 flex justify-center gap-2">
                     <div className="w-2 h-2 bg-amber-400 rounded-full"></div>
@@ -538,8 +585,14 @@ export default function Menu() {
                 </div>
               </div>
 
-              {/* Menu Items Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+              {/* Menu Items Grid - Collapsible on Mobile */}
+              <div 
+                className={`grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 transition-all duration-500 ease-in-out overflow-hidden ${
+                  expandedCategories.has(category.id)
+                    ? 'max-h-[10000px] opacity-100'
+                    : 'max-h-0 opacity-0 lg:max-h-[10000px] lg:opacity-100'
+                }`}
+              >
                 {category.items.map((item, itemIndex) => (
                   <div
                     key={item.id}
