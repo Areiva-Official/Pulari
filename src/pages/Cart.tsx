@@ -326,7 +326,7 @@ export default function Cart({ onNavigate }: CartProps) {
               {/* Uber Eats */}
               <button
                 onClick={() => {
-                  window.open('https://www.ubereats.com/ie/store/pulari-restaurant/abc123', '_blank');
+                  window.open('https://www.ubereats.com/ie/store/pulari-desi/Z1s5JKUHXWuM7Qg9pPxCcA?diningMode=DELIVERY&sc=SEARCH_SUGGESTION', '_blank');
                 }}
                 className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
               >
