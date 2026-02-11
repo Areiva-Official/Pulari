@@ -63,6 +63,7 @@ export default function Menu() {
   const [addedItems, setAddedItems] = useState<Set<string>>(new Set());
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
+  const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
   const { addToCart, items: cartItems } = useCart();
   const navigate = useNavigate();
 
@@ -76,6 +77,32 @@ export default function Menu() {
       }
       return newSet;
     });
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart({
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY
+    });
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent, categoryId: string) => {
+    if (!touchStart) return;
+
+    const touchEnd = {
+      x: e.changedTouches[0].clientX,
+      y: e.changedTouches[0].clientY
+    };
+
+    const deltaX = Math.abs(touchEnd.x - touchStart.x);
+    const deltaY = Math.abs(touchEnd.y - touchStart.y);
+
+    // Only toggle if it's a tap (minimal movement), not a scroll
+    if (deltaX < 10 && deltaY < 10) {
+      toggleCategory(categoryId);
+    }
+
+    setTouchStart(null);
   };
 
   const handleAddToCart = (item: MenuItem) => {
@@ -594,8 +621,14 @@ export default function Menu() {
                     </h2>
                     {/* Chevron icon - only visible on mobile, clickable button */}
                     <button
-                      onClick={() => toggleCategory(category.id)}
-                      className="lg:hidden p-2 hover:bg-amber-50 rounded-full transition-colors"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (window.innerWidth >= 1024) return;
+                        toggleCategory(category.id);
+                      }}
+                      onTouchStart={handleTouchStart}
+                      onTouchEnd={(e) => handleTouchEnd(e, category.id)}
+                      className="lg:hidden p-2 hover:bg-amber-50 rounded-full transition-colors touch-none"
                       aria-label={expandedCategories.has(category.id) ? 'Collapse category' : 'Expand category'}
                     >
                       {expandedCategories.has(category.id) ? (
