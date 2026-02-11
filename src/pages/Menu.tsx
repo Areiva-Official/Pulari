@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
-import { Leaf, Wheat, ShoppingCart, Check, ChevronDown, ChevronUp } from 'lucide-react';
+import { Leaf, Wheat, ShoppingCart, Check } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 
 // Import menu images
@@ -58,25 +57,10 @@ interface MenuCategory {
 }
 
 export default function Menu() {
-  const [categories, setCategories] = useState<MenuCategory[]>([]);
-  const [loading, setLoading] = useState(false); // Set to false to use local data
+  const [selectedCategory, setSelectedCategory] = useState('1');
   const [addedItems, setAddedItems] = useState<Set<string>>(new Set());
-  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
-  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
   const { addToCart, items: cartItems } = useCart();
   const navigate = useNavigate();
-
-  const toggleCategory = (categoryId: string) => {
-    setExpandedCategories(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(categoryId)) {
-        newSet.delete(categoryId);
-      } else {
-        newSet.add(categoryId);
-      }
-      return newSet;
-    });
-  };
 
   const handleAddToCart = (item: MenuItem) => {
     addToCart({
@@ -90,7 +74,6 @@ export default function Menu() {
       is_gluten_free: item.is_gluten_free,
     });
     
-    // Show added animation
     setAddedItems(prev => new Set(prev).add(item.id));
     setTimeout(() => {
       setAddedItems(prev => {
@@ -101,59 +84,7 @@ export default function Menu() {
     }, 2000);
   };
 
-  useEffect(() => {
-    // Comment out database loading for now, using local menu data
-    // loadMenu();
-    
-    // Handle responsive behavior for category expansion
-    const handleResize = () => {
-      const desktop = window.innerWidth >= 1024;
-      setIsDesktop(desktop);
-      if (desktop) {
-        setExpandedCategories(new Set(['1', '2', '3', '4', '5']));
-      } else {
-        setExpandedCategories(new Set());
-      }
-    };
-    
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const loadMenu = async () => {
-    try {
-      const { data: categoriesData } = await supabase
-        .from('menu_categories')
-        .select('*')
-        .order('display_order');
-
-      if (categoriesData) {
-        const categoriesWithItems = await Promise.all(
-          categoriesData.map(async (category) => {
-            const { data: items } = await supabase
-              .from('menu_items')
-              .select('*')
-              .eq('category_id', category.id)
-              .eq('is_available', true);
-
-            return {
-              ...category,
-              items: items || [],
-            };
-          })
-        );
-
-        setCategories(categoriesWithItems);
-      }
-    } catch (error) {
-      console.error('Error loading menu:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const sampleMenu = [
+  const menuCategories: MenuCategory[] = [
     {
       id: '1',
       name: 'APPETIZERS',
@@ -531,255 +462,193 @@ export default function Menu() {
     },
   ];
 
-  const displayMenu = categories.length > 0 ? categories : sampleMenu;
+  const selectedCategoryData = menuCategories.find(cat => cat.id === selectedCategory);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-amber-50 pt-16 sm:pt-20">
-      {/* Hero Section with Parallax Effect */}
+    <div className="min-h-screen bg-gray-50 pt-16 sm:pt-20">
+      {/* Hero Section */}
       <section
-        className="relative h-64 sm:h-80 md:h-96 flex items-center justify-center bg-cover bg-center bg-fixed"
+        className="relative h-48 sm:h-64 md:h-80 flex items-center justify-center bg-cover bg-center"
         style={{
           backgroundImage: 'url(https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?auto=compress&cs=tinysrgb&w=1920)',
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
+        <div className="absolute inset-0 bg-black/60"></div>
         <div className="relative z-10 text-center text-white px-4">
-          <div className="mb-4 sm:mb-6 animate-fade-in">
-            <div className="inline-block px-4 sm:px-6 py-1.5 sm:py-2 bg-amber-600/20 backdrop-blur-sm border border-amber-400/30 rounded-full">
-              <span className="text-amber-300 text-xs sm:text-sm font-semibold tracking-widest">AUTHENTIC KERALA CUISINE</span>
-            </div>
-          </div>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-2 sm:mb-4 animate-slide-up bg-gradient-to-r from-amber-200 via-amber-100 to-amber-200 bg-clip-text text-transparent">
-            Our Menu
-          </h1>
-          <p className="text-base sm:text-lg md:text-xl lg:text-2xl animate-fade-in-delay text-amber-100 font-light tracking-wide px-4">
-            A Culinary Journey Through Kerala's Finest Flavors
-          </p>
-          <div className="mt-4 sm:mt-8 flex justify-center gap-2 animate-fade-in-delay">
-            <div className="w-12 sm:w-20 h-1 bg-amber-500 rounded-full"></div>
-            <div className="w-2 h-1 bg-amber-400 rounded-full"></div>
-            <div className="w-2 h-1 bg-amber-400 rounded-full"></div>
-          </div>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-2">Our Menu</h1>
+          <p className="text-base sm:text-lg md:text-xl">Authentic Kerala Cuisine</p>
         </div>
       </section>
 
-      {/* Menu Categories */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20">
-        {loading ? (
-          <div className="text-center py-20">
-            <div className="inline-block animate-spin rounded-full h-12 sm:h-16 w-12 sm:w-16 border-4 border-amber-200 border-t-amber-600 shadow-lg"></div>
-            <p className="mt-4 text-amber-700 font-semibold text-sm sm:text-base">Loading delicious items...</p>
-          </div>
-        ) : (
-          displayMenu.map((category, categoryIndex) => (
-            <div key={category.id} className="mb-16 sm:mb-20 md:mb-24" style={{ animationDelay: `${categoryIndex * 200}ms` }}>
-              {/* Category Header - Clickable on Mobile */}
-              <div className="text-center mb-10 sm:mb-12 md:mb-16 relative">
-                <div className="absolute inset-0 flex items-center justify-center opacity-10">
-                  <div className="w-full h-24 sm:h-32 bg-gradient-to-r from-transparent via-amber-300 to-transparent blur-3xl"></div>
-                </div>
-                <div className="relative">
-                  <div className="inline-block mb-3 sm:mb-4">
-                    <div className="flex items-center gap-2 sm:gap-3">
-                      <div className="h-px w-8 sm:w-12 md:w-16 bg-gradient-to-r from-transparent to-amber-500"></div>
-                      <div className="w-2 sm:w-3 h-2 sm:h-3 bg-amber-500 rounded-full animate-pulse"></div>
-                      <div className="h-px w-8 sm:w-12 md:w-16 bg-gradient-to-l from-transparent to-amber-500"></div>
-                    </div>
-                  </div>
-                  
-                  {/* Mobile: Clickable header */}
-                  <div className="flex items-center justify-center gap-2 lg:block">
-                    <h2 
-                      onClick={() => {
-                        if (window.innerWidth < 1024) {
-                          toggleCategory(category.id);
-                        }
-                      }}
-                      className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-700 via-amber-600 to-amber-700 bg-clip-text text-transparent mb-3 sm:mb-4 tracking-tight px-4 cursor-pointer lg:cursor-default select-none"
-                    >
-                      {category.name}
-                    </h2>
-                    {/* Chevron icon - only visible on mobile */}
-                    <div className="lg:hidden pointer-events-none">
-                      {expandedCategories.has(category.id) ? (
-                        <ChevronUp className="text-amber-600" size={24} />
-                      ) : (
-                        <ChevronDown className="text-amber-600" size={24} />
-                      )}
-                    </div>
-                  </div>
-                  
-                  <p className="text-base sm:text-lg md:text-xl text-gray-600 italic font-light px-4">{category.description}</p>
-                  <div className="mt-3 sm:mt-4 flex justify-center gap-2">
-                    <div className="w-2 h-2 bg-amber-400 rounded-full"></div>
-                    <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
-                    <div className="w-2 h-2 bg-amber-400 rounded-full"></div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Menu Items Grid - Collapsible on Mobile */}
-              <div 
-                className={`grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 transition-all duration-500 ease-in-out overflow-hidden ${
-                  expandedCategories.has(category.id)
-                    ? 'max-h-[10000px] opacity-100'
-                    : 'max-h-0 opacity-0 lg:max-h-[10000px] lg:opacity-100'
+      {/* Category Tabs */}
+      <div className="sticky top-16 sm:top-20 z-30 bg-white border-b shadow-md">
+        <div className="max-w-7xl mx-auto overflow-x-auto">
+          <div className="flex min-w-max sm:min-w-0 sm:justify-center">
+            {menuCategories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => {
+                  setSelectedCategory(category.id);
+                  window.scrollTo({ top: 300, behavior: 'smooth' });
+                }}
+                className={`px-4 py-4 text-sm font-semibold whitespace-nowrap transition-all ${
+                  selectedCategory === category.id
+                    ? 'text-amber-600 border-b-2 border-amber-600 bg-amber-50'
+                    : 'text-gray-600 hover:text-amber-600 hover:bg-gray-50'
                 }`}
               >
-                {category.items.map((item, itemIndex) => (
-                  <div
-                    key={item.id}
-                    className="group relative bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 animate-fade-in-up border border-gray-100"
-                    style={{ animationDelay: `${itemIndex * 80}ms` }}
-                  >
-                    {/* Hover Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-amber-500/0 via-transparent to-orange-500/0 group-hover:from-amber-500/5 group-hover:to-orange-500/5 transition-all duration-500 pointer-events-none"></div>
-                    
-                    <div className="flex flex-col sm:flex-row">
-                      {/* Image Section with Enhanced Placeholder */}
-                      <div className="relative w-full sm:w-48 md:w-56 h-48 sm:h-56 overflow-hidden">
-                        {item.image_url ? (
-                          <img
-                            src={item.image_url}
-                            alt={item.name}
-                            className="w-full h-full object-cover transform group-hover:scale-110 group-hover:rotate-2 transition-transform duration-700"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-amber-100 via-orange-50 to-amber-200 relative overflow-hidden">
-                            {/* Animated Background Pattern */}
-                            <div className="absolute inset-0 opacity-20">
-                              <div className="absolute inset-0 bg-gradient-to-br from-amber-400/20 to-transparent animate-pulse"></div>
-                            </div>
-                            <svg className="w-12 sm:w-16 h-12 sm:h-16 text-amber-400 mb-2 sm:mb-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            <span className="text-amber-600 text-xs sm:text-sm font-semibold">Image Coming Soon</span>
-                          </div>
+                {category.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Menu Items */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        {selectedCategoryData && (
+          <div>
+            {/* Category Header */}
+            <div className="text-center mb-8">
+              <h2 className="text-3xl sm:text-4xl font-bold text-amber-700 mb-2">
+                {selectedCategoryData.name}
+              </h2>
+              <p className="text-gray-600 text-base sm:text-lg italic">
+                {selectedCategoryData.description}
+              </p>
+            </div>
+
+            {/* Items Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {selectedCategoryData.items.map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow"
+                >
+                  <div className="flex flex-col sm:flex-row">
+                    {/* Image */}
+                    <div className="relative w-full sm:w-48 h-48 flex-shrink-0">
+                      {item.image_url ? (
+                        <img
+                          src={item.image_url}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-100 to-amber-200">
+                          <svg className="w-16 h-16 text-amber-400 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 p-4 sm:p-5">
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="text-lg sm:text-xl font-bold text-gray-800 pr-2">
+                          {item.name}
+                        </h3>
+                        <span className="bg-amber-600 text-white px-3 py-1 rounded-full text-lg font-bold whitespace-nowrap">
+                          €{item.price.toFixed(2)}
+                        </span>
+                      </div>
+
+                      <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                        {item.description}
+                      </p>
+
+                      {/* Tags */}
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {item.is_vegetarian && (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-800">
+                            <Leaf size={12} className="mr-1" />
+                            Vegetarian
+                          </span>
                         )}
-                        {/* Corner Accent */}
-                        <div className="absolute top-0 right-0 w-12 sm:w-16 h-12 sm:h-16 bg-gradient-to-br from-amber-500/20 to-transparent"></div>
+                        {item.is_vegan && (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-800">
+                            <Leaf size={12} className="mr-1" />
+                            Vegan
+                          </span>
+                        )}
+                        {item.is_gluten_free && (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-800">
+                            <Wheat size={12} className="mr-1" />
+                            GF
+                          </span>
+                        )}
                       </div>
 
-                      {/* Content Section */}
-                      <div className="flex-1 p-4 sm:p-5 md:p-6 relative">
-                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-0 mb-3">
-                          <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 group-hover:text-amber-700 transition-colors duration-300 leading-tight sm:pr-2">
-                            {item.name}
-                          </h3>
-                          <div className="flex-shrink-0">
-                            <span className="inline-block bg-gradient-to-br from-amber-500 to-amber-700 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-base sm:text-lg md:text-xl font-bold shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                              €{item.price.toFixed(2)}
-                            </span>
-                          </div>
-                        </div>
-                        
-                        <p className="text-gray-600 mb-3 sm:mb-4 leading-relaxed text-xs sm:text-sm line-clamp-3 group-hover:text-gray-700 transition-colors">
-                          {item.description}
-                        </p>
-                        
-                        <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                          {item.is_vegetarian && (
-                            <span className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border border-green-200 shadow-sm">
-                              <Leaf size={12} className="mr-1 sm:mr-1.5" />
-                              Vegetarian
-                            </span>
-                          )}
-                          {item.is_vegan && (
-                            <span className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border border-green-200 shadow-sm">
-                              <Leaf size={12} className="mr-1 sm:mr-1.5" />
-                              Vegan
-                            </span>
-                          )}
-                          {item.is_gluten_free && (
-                            <span className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-800 border border-yellow-200 shadow-sm">
-                              <Wheat size={12} className="mr-1 sm:mr-1.5" />
-                              GF
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Add to Cart / View Cart Button */}
-                        <button
-                          onClick={() => {
-                            const isInCart = cartItems.some(cartItem => cartItem.id === item.id);
-                            if (isInCart) {
-                              navigate('/cart');
-                            } else {
-                              handleAddToCart(item);
-                            }
-                          }}
-                          disabled={addedItems.has(item.id) && !cartItems.some(cartItem => cartItem.id === item.id)}
-                          className={`mt-4 w-full sm:w-auto flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-bold text-sm sm:text-base transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 ${
-                            addedItems.has(item.id) && !cartItems.some(cartItem => cartItem.id === item.id)
-                              ? 'bg-green-500 text-white cursor-not-allowed'
-                              : cartItems.some(cartItem => cartItem.id === item.id)
-                              ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800'
-                              : 'bg-gradient-to-r from-amber-600 to-amber-700 text-white hover:from-amber-700 hover:to-amber-800'
-                          }`}
-                        >
-                          {addedItems.has(item.id) && !cartItems.some(cartItem => cartItem.id === item.id) ? (
-                            <>
-                              <Check size={18} className="animate-bounce" />
-                              Added to Cart
-                            </>
-                          ) : cartItems.some(cartItem => cartItem.id === item.id) ? (
-                            <>
-                              <ShoppingCart size={18} />
-                              View Cart
-                            </>
-                          ) : (
-                            <>
-                              <ShoppingCart size={18} />
-                              Add to Cart
-                            </>
-                          )}
-                        </button>
-
-                        {/* Decorative Bottom Border */}
-                        <div className="hidden sm:block absolute bottom-0 left-6 right-6 h-1 bg-gradient-to-r from-transparent via-amber-300 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                      </div>
+                      {/* Add to Cart Button */}
+                      <button
+                        onClick={() => {
+                          const isInCart = cartItems.some(cartItem => cartItem.id === item.id);
+                          if (isInCart) {
+                            navigate('/cart');
+                          } else {
+                            handleAddToCart(item);
+                          }
+                        }}
+                        className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-semibold text-sm transition-all ${
+                          addedItems.has(item.id) && !cartItems.some(cartItem => cartItem.id === item.id)
+                            ? 'bg-green-500 text-white'
+                            : cartItems.some(cartItem => cartItem.id === item.id)
+                            ? 'bg-blue-600 text-white hover:bg-blue-700'
+                            : 'bg-amber-600 text-white hover:bg-amber-700'
+                        }`}
+                      >
+                        {addedItems.has(item.id) && !cartItems.some(cartItem => cartItem.id === item.id) ? (
+                          <>
+                            <Check size={18} />
+                            Added to Cart
+                          </>
+                        ) : cartItems.some(cartItem => cartItem.id === item.id) ? (
+                          <>
+                            <ShoppingCart size={18} />
+                            View Cart
+                          </>
+                        ) : (
+                          <>
+                            <ShoppingCart size={18} />
+                            Add to Cart
+                          </>
+                        )}
+                      </button>
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          ))
+          </div>
         )}
       </div>
 
-      {/* Allergen Information Section with Enhanced Design */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-        <div className="relative bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 border-2 sm:border-4 border-amber-500 rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-10 shadow-2xl overflow-hidden animate-fade-in">
-          {/* Decorative Background Pattern */}
-          <div className="absolute inset-0 opacity-5">
-            <div className="absolute inset-0" style={{
-              backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,.03) 10px, rgba(0,0,0,.03) 20px)'
-            }}></div>
-          </div>
-          
-          <div className="relative z-10">
-            <div className="text-center mb-6 sm:mb-8">
-              <div className="inline-block p-2 sm:p-3 bg-red-100 rounded-full mb-3 sm:mb-4">
-                <svg className="w-6 sm:w-8 h-6 sm:h-8 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+      {/* Allergen Information */}
+      <div className="bg-amber-50 border-t-4 border-amber-500 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-lg p-6 sm:p-8 shadow-lg">
+            <div className="text-center mb-6">
+              <div className="inline-block p-3 bg-red-100 rounded-full mb-3">
+                <svg className="w-8 h-8 text-red-600" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                 </svg>
               </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-red-800 mb-2 sm:mb-3 tracking-tight px-4">
+              <h2 className="text-2xl sm:text-3xl font-bold text-red-800 mb-2">
                 BE FOOD ALLERGEN AWARE
               </h2>
-              <div className="w-16 sm:w-24 h-1 bg-red-600 mx-auto mb-4 sm:mb-6 rounded-full"></div>
-              <p className="text-base sm:text-lg md:text-xl text-gray-800 mb-3 sm:mb-4 font-bold italic px-4">
+              <p className="text-base sm:text-lg text-gray-800 font-bold italic mb-4">
                 "YOUR SAFETY MATTERS, INFORM US OF FOOD ALLERGENS OR RESTRICTIONS"
               </p>
             </div>
-            
-            <div className="text-center text-gray-700 mb-6 sm:mb-8 bg-white/60 rounded-lg p-4 sm:p-6 backdrop-blur-sm">
-              <p className="mb-2 text-xs sm:text-sm">The food products are manufactured in a facility and also processes allergens.</p>
-              <p className="mb-2 sm:mb-3 text-xs sm:text-sm">May contain allergies.</p>
-              <p className="font-bold text-amber-900 text-sm sm:text-base">Please ask our staff if you require further allergen information.</p>
+
+            <div className="text-center text-gray-700 mb-6 text-sm">
+              <p className="mb-2">The food products are manufactured in a facility that also processes allergens.</p>
+              <p className="mb-2">May contain allergies.</p>
+              <p className="font-bold text-amber-900">Please ask our staff if you require further allergen information.</p>
             </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
               {[
                 { num: 1, name: 'Wheat' },
                 { num: 2, name: 'Crustaceans' },
@@ -795,31 +664,19 @@ export default function Menu() {
                 { num: 12, name: 'Lupin' },
                 { num: 13, name: 'Sulphites' },
                 { num: 14, name: 'Molluscs Oyster Sauce' },
-              ].map((allergen, index) => (
-                <div 
+              ].map((allergen) => (
+                <div
                   key={allergen.num}
-                  className="flex items-center bg-white/80 backdrop-blur-sm p-2.5 sm:p-3 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300"
-                  style={{ animationDelay: `${index * 50}ms` }}
+                  className="flex items-center bg-white p-2.5 rounded-lg shadow-sm"
                 >
-                  <span className="flex-shrink-0 w-7 sm:w-8 h-7 sm:h-8 flex items-center justify-center bg-gradient-to-br from-amber-500 to-amber-700 text-white font-bold rounded-full mr-2 sm:mr-3 shadow-md text-sm sm:text-base">
+                  <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-amber-600 text-white font-bold rounded-full mr-2 text-sm">
                     {allergen.num}
                   </span>
-                  <span className="text-gray-800 font-medium text-xs sm:text-sm">{allergen.name}</span>
+                  <span className="text-gray-800 font-medium text-xs">{allergen.name}</span>
                 </div>
               ))}
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Bottom CTA Section */}
-      <div className="bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 py-12 sm:py-16">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6">
-          <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">Ready to Experience Authentic Kerala Flavors?</h3>
-          <p className="text-base sm:text-lg md:text-xl text-amber-100 mb-6 sm:mb-8">Book your table now and embark on a culinary journey</p>
-          <button className="bg-white text-amber-700 px-8 sm:px-10 py-3 sm:py-4 rounded-full text-base sm:text-lg font-bold hover:bg-amber-50 transform hover:scale-105 transition-all duration-300 shadow-2xl">
-            Make a Reservation
-          </button>
         </div>
       </div>
     </div>
