@@ -1,7 +1,10 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Leaf, Wheat, ShoppingCart, Check } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
+
+interface MenuProps {
+  onNavigate?: (page: string) => void;
+}
 
 // Import menu images
 import samosaImage from '../assets/gallery/samosa.jpg';
@@ -56,11 +59,10 @@ interface MenuCategory {
   items: MenuItem[];
 }
 
-export default function Menu() {
+export default function Menu({ onNavigate }: MenuProps) {
   const [selectedCategory, setSelectedCategory] = useState('1');
   const [addedItems, setAddedItems] = useState<Set<string>>(new Set());
   const { addToCart, items: cartItems } = useCart();
-  const navigate = useNavigate();
 
   const handleAddToCart = (item: MenuItem) => {
     addToCart({
@@ -585,7 +587,7 @@ export default function Menu() {
                         onClick={() => {
                           const isInCart = cartItems.some(cartItem => cartItem.id === item.id);
                           if (isInCart) {
-                            navigate('/cart');
+                            onNavigate?.('cart');
                           } else {
                             handleAddToCart(item);
                           }

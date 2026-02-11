@@ -34,7 +34,7 @@ function App() {
       case 'about':
         return <About />;
       case 'menu':
-        return <Menu />;
+        return <Menu onNavigate={setCurrentPage} />;
       case 'gallery':
         return <Gallery />;
       case 'contact':
