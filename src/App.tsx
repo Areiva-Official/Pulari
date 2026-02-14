@@ -114,10 +114,10 @@ function App() {
           </div>
         </footer>
 
-        {/* Floating Chat Button */}
+        {/* Floating Chat Button - Positioned to avoid blocking checkout bar on mobile */}
         <button
           onClick={handleWhatsAppChat}
-          className="fixed bottom-6 right-6 bg-gradient-to-r from-amber-600 to-amber-700 text-white p-4 rounded-full shadow-2xl hover:from-amber-700 hover:to-amber-800 transform hover:scale-110 transition-all duration-300 z-50 group"
+          className="fixed bottom-24 md:bottom-6 right-6 bg-gradient-to-r from-amber-600 to-amber-700 text-white p-4 rounded-full shadow-2xl hover:from-amber-700 hover:to-amber-800 transform hover:scale-110 transition-all duration-300 z-40 group"
           aria-label="Chat with us"
         >
           <MessageCircle size={28} className="animate-pulse group-hover:animate-none" />
