@@ -1,10 +1,19 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { Amplify } from 'aws-amplify';
+import { signUp as amplifySignUp, signIn as amplifySignIn, signOut as amplifySignOut, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
+import { awsConfig } from '../aws-config';
+
+Amplify.configure(awsConfig);
+
+interface CognitoUser {
+  userId: string;
+  username: string;
+  email?: string;
+}
 
 interface AuthContextType {
-  user: User | null;
-  session: Session | null;
+  user: CognitoUser | null;
+  session: any | null;
   loading: boolean;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
@@ -13,80 +22,75 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<CognitoUser | null>(null);
+  const [session, setSession] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // If Supabase is not configured, just set loading to false
-    if (!isSupabaseConfigured() || !supabase) {
-      setLoading(false);
-      return;
-    }
-
-    const client = supabase; // TypeScript assertion that supabase is not null here
-
-    client.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    const { data: { subscription } } = client.auth.onAuthStateChange((_event, session) => {
-      (async () => {
-        setSession(session);
-        setUser(session?.user ?? null);
-      })();
-    });
-
-    return () => subscription.unsubscribe();
+    // Check if user is already authenticated
+    checkUser();
   }, []);
 
-  const signUp = async (email: string, password: string, fullName: string) => {
-    if (!isSupabaseConfigured() || !supabase) {
-      return { error: { message: 'Authentication not configured' } };
-    }
-
-    const client = supabase; // TypeScript assertion
-
-    const { data, error } = await client.auth.signUp({
-      email,
-      password,
-    });
-
-    if (!error && data.user) {
-      await client.from('profiles').insert({
-        id: data.user.id,
-        email,
-        full_name: fullName,
+  const checkUser = async () => {
+    try {
+      const currentUser = await getCurrentUser();
+      const session = await fetchAuthSession();
+      
+      setUser({
+        userId: currentUser.userId,
+        username: currentUser.username,
+        email: currentUser.signInDetails?.loginId,
       });
+      setSession(session);
+    } catch (error) {
+      setUser(null);
+      setSession(null);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    return { error };
+  const signUp = async (email: string, password: string, fullName: string) => {
+    try {
+      await amplifySignUp({
+        username: email,
+        password,
+        options: {
+          userAttributes: {
+            email,
+            name: fullName,
+          },
+        },
+      });
+      return { error: null };
+    } catch (error: any) {
+      return { error: { message: error.message } };
+    }
   };
 
   const signIn = async (email: string, password: string) => {
-    if (!isSupabaseConfigured() || !supabase) {
-      return { error: { message: 'Authentication not configured' } };
+    try {
+      await amplifySignIn({
+        username: email,
+        password,
+      });
+      await checkUser();
+      return { error: null };
+    } catch (error: any) {
+      return { error: { message: error.message } };
     }
-
-    const client = supabase; // TypeScript assertion
-
-    const { error } = await client.auth.signInWithPassword({
-      email,
-      password,
-    });
-    return { error };
   };
 
   const signOut = async () => {
-    if (!isSupabaseConfigured() || !supabase) {
-      return;
+    try {
+      await amplifySignOut();
+      setUser(null);
+      setSession(null);
+    } catch (error) {
+      console.error('Error signing out:', error);
     }
-    
-    const client = supabase; // TypeScript assertion
-    await client.auth.signOut();
   };
 
   const value = {

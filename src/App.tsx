@@ -102,8 +102,9 @@ function App() {
               <div>
                 <h4 className="font-semibold mb-4">Hours</h4>
                 <ul className="space-y-2 text-gray-400">
-                  <li>Monday - Sunday</li>
-                  <li>11:00 AM - 3:00 AM</li>
+                  <li>Monday, Wednesday - Sunday</li>
+                  <li>12:00 PM - 9:00 PM</li>
+                  <li className="text-amber-500">Closed Tuesdays</li>
                 </ul>
               </div>
             </div>

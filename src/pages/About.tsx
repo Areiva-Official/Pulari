@@ -20,21 +20,32 @@ export default function About() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="prose prose-lg max-w-none">
             <p className="text-xl text-gray-700 leading-relaxed mb-6 animate-slide-in-left">
-              Pulari Restaurant opened its doors in 2015 with a simple vision: to bring authentic,
-              high-quality cuisine to Dublin city centre while creating a warm, welcoming
-              atmosphere that feels like home.
+              Nestled in the vibrant heart of Dublin city centre on Temple Street, Pulari Restaurant 
+              opened its doors in 2025 with a vision to bring the authentic flavors of South Indian 
+              and Kerala cuisine to Ireland. Founded by Mr. Bijukuttan, a passionate culinary visionary 
+              with deep roots in traditional Kerala cooking, Pulari represents more than just a restaurant—it's 
+              a bridge between two cultures, a celebration of heritage, and a warm embrace of Irish hospitality.
             </p>
             <p className="text-xl text-gray-700 leading-relaxed mb-6 animate-slide-in-right">
-              Founded by Chef Michael O'Brien, who trained in Michelin-starred restaurants across
-              Europe, XYZ combines classical techniques with innovative flavors. Our menu
-              celebrates the best of Irish produce, sourced from local farms and fishermen who
-              share our commitment to quality and sustainability.
+              The name "Pulari" evokes the first light of dawn in Malayalam, symbolizing new beginnings 
+              and the awakening of flavors. Mr. Bijukuttan's journey from the spice-laden kitchens of 
+              Kerala to Dublin's bustling streets is one of dedication and passion. Having mastered the 
+              art of traditional Kerala cooking from generations of family recipes, he brings authentic 
+              techniques and rare spice blends that transport diners straight to the backwaters of Kerala.
             </p>
-            <p className="text-xl text-gray-700 leading-relaxed animate-slide-in-left">
-              Today, Pulari Restaurant continues to be a cornerstone of Dublin's dining scene,
-              recognized for excellence in both food and service. We're proud to have served
-              thousands of guests, from locals celebrating special occasions to visitors
-              discovering the best of Irish hospitality.
+            <p className="text-xl text-gray-700 leading-relaxed mb-6 animate-slide-in-left">
+              Our menu is a carefully curated collection of South Indian delicacies—from crispy dosas 
+              and fluffy appams to aromatic biryanis and rich curries. Every dish tells a story, prepared 
+              with premium ingredients and the same love that goes into a home-cooked meal. We source 
+              authentic spices and ingredients while incorporating the finest Irish produce, creating a 
+              unique fusion that honors both traditions.
+            </p>
+            <p className="text-xl text-gray-700 leading-relaxed animate-slide-in-right">
+              Open six days a week from 12 PM to 9 PM (closed Tuesdays), Pulari has quickly become a 
+              beloved destination for both the Indian community seeking a taste of home and Irish locals 
+              discovering the rich tapestry of South Indian cuisine. Whether you're joining us for lunch 
+              or dinner, our doors welcome you to experience the warmth, flavor, and hospitality that 
+              define Pulari Restaurant.
             </p>
           </div>
         </div>
@@ -47,23 +58,23 @@ export default function About() {
             {[
               {
                 icon: <Heart size={48} />,
-                title: 'Passion',
-                description: 'Every dish is prepared with love and attention to detail',
+                title: 'Authenticity',
+                description: 'Traditional Kerala recipes passed down through generations',
               },
               {
                 icon: <Leaf size={48} />,
-                title: 'Sustainability',
-                description: 'We source locally and minimize our environmental impact',
+                title: 'Quality',
+                description: 'Premium spices and fresh ingredients in every dish',
               },
               {
                 icon: <Users size={48} />,
                 title: 'Community',
-                description: 'Supporting local producers and bringing people together',
+                description: 'A warm gathering place for families and friends',
               },
               {
                 icon: <Trophy size={48} />,
-                title: 'Excellence',
-                description: 'Striving for perfection in every aspect of dining',
+                title: 'Hospitality',
+                description: 'Exceptional service with a personal touch, day and night',
               },
             ].map((value, index) => (
               <div
@@ -80,50 +91,7 @@ export default function About() {
         </div>
       </section>
 
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-center mb-16 text-gray-800">Meet Our Team</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {[
-              {
-                image: 'https://images.pexels.com/photos/3814446/pexels-photo-3814446.jpeg?auto=compress&cs=tinysrgb&w=600',
-                name: 'Michael O\'Brien',
-                role: 'Executive Chef',
-                bio: '15 years of experience in Michelin-starred restaurants',
-              },
-              {
-                image: 'https://images.pexels.com/photos/3785077/pexels-photo-3785077.jpeg?auto=compress&cs=tinysrgb&w=600',
-                name: 'Sarah Murphy',
-                role: 'Head Pastry Chef',
-                bio: 'Award-winning pastry chef specializing in modern desserts',
-              },
-              {
-                image: 'https://images.pexels.com/photos/3785079/pexels-photo-3785079.jpeg?auto=compress&cs=tinysrgb&w=600',
-                name: 'James Kelly',
-                role: 'Sous Chef',
-                bio: 'Passionate about seasonal Irish ingredients',
-              },
-            ].map((member, index) => (
-              <div
-                key={index}
-                className="text-center animate-fade-in-up"
-                style={{ animationDelay: `${index * 150}ms` }}
-              >
-                <div className="relative overflow-hidden rounded-lg mb-6 group">
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="w-full h-80 object-cover transform group-hover:scale-110 transition-transform duration-500"
-                  />
-                </div>
-                <h3 className="text-2xl font-semibold mb-2 text-gray-800">{member.name}</h3>
-                <p className="text-amber-600 font-semibold mb-3">{member.role}</p>
-                <p className="text-gray-600">{member.bio}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Meet Our Team section removed */}
     </div>
   );
 }

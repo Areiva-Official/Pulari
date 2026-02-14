@@ -51,7 +51,7 @@ export default function Home({ onNavigate }: HomeProps) {
               <div className="space-y-3">
                 <div>
                   <h3 className="text-lg font-bold text-gray-800 mb-1">Open Daily</h3>
-                  <p className="text-sm text-gray-600">Monday - Sunday<br/>11:00 AM - 3:00 AM</p>
+                  <p className="text-sm text-gray-600">Mon, Wed-Sun<br/>12:00 PM - 9:00 PM<br/><span className="text-red-600">Closed Tuesdays</span></p>
                 </div>
                 <div className="h-px bg-amber-300"></div>
                 <div>
@@ -71,8 +71,8 @@ export default function Home({ onNavigate }: HomeProps) {
               },
               {
                 icon: <Clock size={48} />,
-                title: 'Open Daily',
-                description: 'Monday - Sunday, 11:00 AM - 3:00 AM',
+                title: 'Open 6 Days',
+                description: 'Mon, Wed-Sun, 12:00 PM - 9:00 PM (Closed Tuesdays)',
                 showOnDesktop: true,
               },
               {

@@ -66,7 +66,7 @@ export default function Contact() {
                 <div>
                   <h3 className="font-semibold text-gray-800 mb-1">Phone</h3>
                   <p className="text-gray-600">087 973 8186</p>
-                  <p className="text-gray-600 text-sm mt-1">Monday - Sunday: 11:00 AM - 3:00 AM</p>
+                  <p className="text-gray-600 text-sm mt-1">Mon, Wed-Sun: 12:00 PM - 9:00 PM (Closed Tuesdays)</p>
                 </div>
               </div>
 
