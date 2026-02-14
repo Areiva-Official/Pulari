@@ -90,12 +90,17 @@ export default function Home({ onNavigate }: HomeProps) {
             ].map((feature, index) => (
               <div
                 key={index}
-                className="hidden lg:block text-center p-6 rounded-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-in-up"
+                className="hidden lg:block perspective-container"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="text-amber-600 flex justify-center mb-4">{feature.icon}</div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2 text-gray-800">{feature.title}</h3>
-                <p className="text-sm sm:text-base text-gray-600">{feature.description}</p>
+                <div className="text-center p-6 rounded-xl bg-white/80 backdrop-blur-sm hover:bg-white shadow-md hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 hover:scale-105 animate-fade-in-up group">
+                  <div className="text-amber-600 flex justify-center mb-4 transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
+                    {feature.icon}
+                  </div>
+                  <h3 className="text-lg sm:text-xl font-semibold mb-2 text-gray-800 group-hover:text-amber-600 transition-colors duration-300">{feature.title}</h3>
+                  <p className="text-sm sm:text-base text-gray-600">{feature.description}</p>
+                  <div className="mt-4 h-1 w-0 group-hover:w-full bg-gradient-to-r from-amber-400 to-amber-600 transition-all duration-500 mx-auto rounded-full"></div>
+                </div>
               </div>
             ))}
           </div>
@@ -136,27 +141,33 @@ export default function Home({ onNavigate }: HomeProps) {
             ].map((dish, index) => (
               <div
                 key={index}
-                className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-fade-in-up"
+                className="perspective-container"
                 style={{ animationDelay: `${index * 150}ms` }}
               >
-                <div className="relative overflow-hidden group">
-                  <img
-                    src={dish.image}
-                    alt={dish.title}
-                    className="w-full h-48 sm:h-56 md:h-64 object-cover transform group-hover:scale-110 transition-transform duration-500"
-                  />
-                </div>
-                <div className="p-4 sm:p-6">
-                  <h3 className="text-xl sm:text-2xl font-semibold mb-2 text-gray-800">{dish.title}</h3>
-                  <p className="text-sm sm:text-base text-gray-600 mb-4">{dish.description}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xl sm:text-2xl font-bold text-amber-600">{dish.price}</span>
-                    <button
-                      onClick={() => onNavigate('menu')}
-                      className="text-amber-600 hover:text-amber-700 font-semibold transition-colors duration-300 text-sm sm:text-base"
-                    >
-                      View Full Menu →
-                    </button>
+                <div className="card-3d bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 animate-fade-in-up group">
+                  <div className="relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"></div>
+                    <img
+                      src={dish.image}
+                      alt={dish.title}
+                      className="w-full h-48 sm:h-56 md:h-64 object-cover transform group-hover:scale-110 group-hover:rotate-2 transition-all duration-700"
+                    />
+                    <div className="absolute top-4 right-4 bg-amber-500 text-white px-3 py-1 rounded-full text-sm font-semibold opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-4 group-hover:translate-x-0">
+                      Popular
+                    </div>
+                  </div>
+                  <div className="p-4 sm:p-6 bg-gradient-to-b from-white to-gray-50">
+                    <h3 className="text-xl sm:text-2xl font-semibold mb-2 text-gray-800 group-hover:text-amber-600 transition-colors duration-300">{dish.title}</h3>
+                    <p className="text-sm sm:text-base text-gray-600 mb-4 line-clamp-2">{dish.description}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xl sm:text-2xl font-bold text-amber-600 animate-bounce-subtle">{dish.price}</span>
+                      <button
+                        onClick={() => onNavigate('menu')}
+                        className="px-4 py-2 bg-amber-500 text-white rounded-full hover:bg-amber-600 transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg text-sm sm:text-base font-medium"
+                      >
+                        Order Now →
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
