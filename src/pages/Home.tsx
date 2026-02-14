@@ -94,7 +94,7 @@ export default function Home({ onNavigate }: HomeProps) {
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <div className="text-center p-6 rounded-xl bg-white/80 backdrop-blur-sm hover:bg-white shadow-md hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 hover:scale-105 animate-fade-in-up group">
-                  <div className="text-amber-600 flex justify-center mb-4 transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
+                  <div className="text-amber-600 flex justify-center mb-4 transition-all duration-300">
                     {feature.icon}
                   </div>
                   <h3 className="text-lg sm:text-xl font-semibold mb-2 text-gray-800 group-hover:text-amber-600 transition-colors duration-300">{feature.title}</h3>

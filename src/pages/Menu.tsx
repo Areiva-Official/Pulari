@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Leaf, Wheat, ShoppingCart, Check } from 'lucide-react';
+import { Leaf, Wheat, ShoppingCart, Check, ArrowRight } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 
 interface MenuProps {
@@ -681,6 +681,38 @@ export default function Menu({ onNavigate }: MenuProps) {
           </div>
         </div>
       </div>
+
+      {/* Floating Checkout Bar - Only show when cart has items */}
+      {cartItems.length > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 animate-slide-up">
+          <div className="bg-gradient-to-r from-amber-600 to-amber-700 shadow-2xl">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="bg-white/20 backdrop-blur-sm rounded-full p-3">
+                    <ShoppingCart className="text-white" size={24} />
+                  </div>
+                  <div className="text-white">
+                    <p className="text-sm font-medium opacity-90">
+                      {cartItems.length} {cartItems.length === 1 ? 'item' : 'items'} in cart
+                    </p>
+                    <p className="text-lg font-bold">
+                      €{cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => onNavigate?.('cart')}
+                  className="flex items-center space-x-2 bg-white text-amber-700 px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 hover:bg-amber-50"
+                >
+                  <span className="text-sm sm:text-base">Proceed to Checkout</span>
+                  <ArrowRight size={20} className="animate-bounce-subtle" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
