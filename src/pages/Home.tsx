@@ -1,4 +1,5 @@
 import { ChefHat, Clock, MapPin, Award } from 'lucide-react';
+import SEO from '../components/SEO';
 import samosaImage from '../assets/gallery/samosa.jpg';
 import meduVadaImage from '../assets/gallery/medu vada.jpg';
 import masalaOmeletteImage from '../assets/gallery/masala omlette.jpg';
@@ -11,6 +12,12 @@ interface HomeProps {
 export default function Home({ onNavigate }: HomeProps) {
   return (
     <div className="min-h-screen">
+      <SEO
+        title="Authentic Kerala & South Indian Restaurant Dublin"
+        description="Pulari Restaurant at Crow St, Temple Bar, Dublin — authentic Kerala and South Indian cuisine. Dosas, biryanis, fish curry, and more. Open daily 12PM–9PM (10PM Fri &amp; Sat). Call 083 068 1518."
+        canonical="/"
+        keywords="Indian restaurant Dublin, Kerala restaurant Dublin, South Indian food Dublin, Kerala food Ireland, Temple Bar restaurant Dublin, Crow Street restaurant Dublin, authentic Indian food Dublin 2"
+      />
       <section
         className="relative min-h-screen flex items-center justify-center bg-cover bg-center"
         style={{
@@ -51,12 +58,12 @@ export default function Home({ onNavigate }: HomeProps) {
               <div className="space-y-3">
                 <div>
                   <h3 className="text-lg font-bold text-gray-800 mb-1">Open Daily</h3>
-                  <p className="text-sm text-gray-600">Mon, Wed-Sun<br/>12:00 PM - 9:00 PM<br/><span className="text-red-600">Closed Tuesdays</span></p>
+                  <p className="text-sm text-gray-600">Mon–Thu &amp; Sun: 12–9 PM<br/>Fri–Sat: 12–10 PM</p>
                 </div>
                 <div className="h-px bg-amber-300"></div>
                 <div>
                   <h3 className="text-lg font-bold text-gray-800 mb-1">Prime Location</h3>
-                  <p className="text-sm text-gray-600">Temple Street, Dublin 2</p>
+                  <p className="text-sm text-gray-600">Crow St, Temple Bar, Dublin</p>
                 </div>
               </div>
             </div>
@@ -71,8 +78,8 @@ export default function Home({ onNavigate }: HomeProps) {
               },
               {
                 icon: <Clock size={48} />,
-                title: 'Open 6 Days',
-                description: 'Mon, Wed-Sun, 12:00 PM - 9:00 PM (Closed Tuesdays)',
+                title: 'Open Daily',
+                description: 'Mon–Thu & Sun: 12–9 PM · Fri–Sat: 12–10 PM',
                 showOnDesktop: true,
               },
               {

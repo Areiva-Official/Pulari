@@ -1,8 +1,16 @@
 import { Users, Heart, Leaf, Trophy } from 'lucide-react';
+import SEO from '../components/SEO';
 
 export default function About() {
   return (
     <div className="min-h-screen pt-24">
+      <SEO
+        title="About Us | Kerala Restaurant Founded by Mr. Bijukuttan"
+        description="Learn the story of Pulari Restaurant, founded in 2025 by Mr. Bijukuttan at Crow St, Temple Bar, Dublin. Authentic Kerala and South Indian cuisine with a passion for heritage and hospitality."
+        canonical="/about"
+        keywords="about Pulari restaurant Dublin, Kerala restaurant story Dublin, Mr Bijukuttan chef Dublin, authentic Kerala food Dublin history"
+        breadcrumbs={[{ name: 'About Us', url: '/about' }]}
+      />
       <section
         className="relative h-96 flex items-center justify-center bg-cover bg-center"
         style={{
@@ -20,7 +28,7 @@ export default function About() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="prose prose-lg max-w-none">
             <p className="text-xl text-gray-700 leading-relaxed mb-6 animate-slide-in-left">
-              Nestled in the vibrant heart of Dublin city centre on Temple Street, Pulari Restaurant 
+              Nestled in the vibrant heart of Dublin city centre on Crow Street in Temple Bar, Pulari Restaurant 
               opened its doors in 2025 with a vision to bring the authentic flavors of South Indian 
               and Kerala cuisine to Ireland. Founded by Mr. Bijukuttan, a passionate culinary visionary 
               with deep roots in traditional Kerala cooking, Pulari represents more than just a restaurant—it's 
@@ -41,7 +49,7 @@ export default function About() {
               unique fusion that honors both traditions.
             </p>
             <p className="text-xl text-gray-700 leading-relaxed animate-slide-in-right">
-              Open six days a week from 12 PM to 9 PM (closed Tuesdays), Pulari has quickly become a 
+              Open seven days a week — 12 PM to 9 PM (10 PM on Fridays and Saturdays) — Pulari has quickly become a 
               beloved destination for both the Indian community seeking a taste of home and Irish locals 
               discovering the rich tapestry of South Indian cuisine. Whether you're joining us for lunch 
               or dinner, our doors welcome you to experience the warmth, flavor, and hospitality that 

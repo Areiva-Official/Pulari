@@ -1,61 +1,39 @@
 import { useEffect, useState } from 'react';
 import { Star } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../lib/supabase';
-
-interface Review {
-  id: string;
-  rating: number;
-  title: string;
-  comment: string;
-  created_at: string;
-  profiles?: {
-    full_name: string;
-  };
-}
+import { reviewsApi } from '../lib/api';
+import type { Review } from '../types';
 
 interface ReviewsProps {
   onNavigate: (page: string) => void;
 }
 
+interface DisplayReview {
+  id: string;
+  rating: number;
+  title: string;
+  comment: string;
+  created_at: string;
+  name: string;
+}
+
 export default function Reviews({ onNavigate }: ReviewsProps) {
   const { user } = useAuth();
-  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviews, setReviews] = useState<DisplayReview[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({
-    rating: 5,
-    title: '',
-    comment: '',
-  });
+  const [formData, setFormData] = useState({ rating: 5, title: '', comment: '' });
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  useEffect(() => {
-    loadReviews();
-  }, []);
-
-  const loadReviews = async () => {
-    const { data } = await supabase
-      .from('reviews')
-      .select('*, profiles(full_name)')
-      .eq('is_approved', true)
-      .order('created_at', { ascending: false });
-
-    if (data) {
-      setReviews(data);
-    }
-    setLoading(false);
-  };
-
-  const sampleReviews = [
+  const sampleReviews: DisplayReview[] = [
     {
       id: '1',
       rating: 5,
       title: 'Outstanding Experience',
       comment: 'Absolutely incredible dining experience! The food was exquisite, service impeccable, and the atmosphere was perfect. Will definitely be returning.',
       created_at: '2025-10-15',
-      profiles: { full_name: 'Sarah Murphy' },
+      name: 'Sarah Murphy',
     },
     {
       id: '2',
@@ -63,7 +41,7 @@ export default function Reviews({ onNavigate }: ReviewsProps) {
       title: 'Best Restaurant in Dublin',
       comment: 'XYZ never disappoints. The ribeye steak was cooked to perfection and the wine selection is impressive. Highly recommend for special occasions.',
       created_at: '2025-10-10',
-      profiles: { full_name: 'James O\'Connor' },
+      name: 'James O\'Connor',
     },
     {
       id: '3',
@@ -71,7 +49,7 @@ export default function Reviews({ onNavigate }: ReviewsProps) {
       title: 'Wonderful Evening',
       comment: 'Great food and lovely staff. The salmon was delicious and the dessert was divine. Only minor issue was the wait time, but it was worth it.',
       created_at: '2025-10-05',
-      profiles: { full_name: 'Emma Walsh' },
+      name: 'Emma Walsh',
     },
     {
       id: '4',
@@ -79,7 +57,7 @@ export default function Reviews({ onNavigate }: ReviewsProps) {
       title: 'Perfect for Celebrations',
       comment: 'Celebrated our anniversary here and it was magical. The staff went above and beyond to make our evening special. Thank you XYZ!',
       created_at: '2025-09-28',
-      profiles: { full_name: 'Michael Byrne' },
+      name: 'Michael Byrne',
     },
     {
       id: '5',
@@ -87,37 +65,63 @@ export default function Reviews({ onNavigate }: ReviewsProps) {
       title: 'Exceptional Quality',
       comment: 'The attention to detail in every dish is remarkable. You can taste the quality of the ingredients. The mushroom risotto was heavenly!',
       created_at: '2025-09-20',
-      profiles: { full_name: 'Aoife Kelly' },
+      name: 'Aoife Kelly',
     },
   ];
 
-  const displayReviews = reviews.length > 0 ? reviews : sampleReviews;
+  const mapReview = (r: Review): DisplayReview => ({
+    id: r.id,
+    rating: r.rating,
+    title: '',
+    comment: r.comment,
+    created_at: r.createdAt,
+    name: r.customerName || 'Anonymous',
+  });
+
+  const loadReviews = async () => {
+    setLoading(true);
+    const res = await reviewsApi.getApproved();
+    const live = (res.data ?? []).map(mapReview);
+    // Show live reviews when available; otherwise keep the sample testimonials
+    // so the page never looks empty.
+    setReviews(live.length > 0 ? live : sampleReviews);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      const res = await reviewsApi.getApproved();
+      if (!active) return;
+      const live = (res.data ?? []).map(mapReview);
+      setReviews(live.length > 0 ? live : sampleReviews);
+      setLoading(false);
+    })();
+    return () => {
+      active = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const displayReviews = reviews;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!user) {
-      onNavigate('login');
-      return;
-    }
-
+    if (!user) { onNavigate('login'); return; }
     setSubmitting(true);
-
-    const { error } = await supabase.from('reviews').insert({
-      user_id: user.id,
-      rating: formData.rating,
-      title: formData.title,
+    const res = await reviewsApi.submit({
+      customerName: user.email || user.username,
+      rating: formData.rating as Review['rating'],
       comment: formData.comment,
     });
-
-    if (!error) {
+    setSubmitting(false);
+    if (!res.error) {
       setSuccess(true);
       setFormData({ rating: 5, title: '', comment: '' });
       setShowForm(false);
       setTimeout(() => setSuccess(false), 5000);
+      void loadReviews();
     }
-
-    setSubmitting(false);
   };
 
   const renderStars = (rating: number) => {
@@ -284,10 +288,12 @@ export default function Reviews({ onNavigate }: ReviewsProps) {
                     {new Date(review.created_at).toLocaleDateString()}
                   </span>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-3">{review.title}</h3>
+                {review.title && (
+                  <h3 className="text-xl font-semibold text-gray-800 mb-3">{review.title}</h3>
+                )}
                 <p className="text-gray-600 mb-4 leading-relaxed">{review.comment}</p>
                 <p className="text-sm font-semibold text-amber-600">
-                  {review.profiles?.full_name || 'Anonymous'}
+                  {review.name || 'Anonymous'}
                 </p>
               </div>
             ))}

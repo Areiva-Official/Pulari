@@ -24,17 +24,23 @@ export default function Navigation({ currentPage, onNavigate }: NavigationProps)
   }, []);
 
   const navItems = [
+    { name: 'Home', path: 'home' },
     { name: 'Menu', path: 'menu' },
-    { name: 'Contact', path: 'contact' },
+    { name: '🔥 Special Offers', path: 'special-offers' },
+    { name: 'Kerala Cuisine', path: 'kerala-cuisine' },
+    { name: 'Vegetarian Menu', path: 'vegetarian' },
+    { name: 'Blog', path: 'blog' },
     { name: 'About', path: 'about' },
+    { name: 'Contact', path: 'contact' },
   ];
 
   const desktopNavItems = [
-    { name: 'Home', path: 'home' },
-    { name: 'About', path: 'about' },
-    { name: 'Menu', path: 'menu' },
-    { name: 'Gallery', path: 'gallery' },
-    { name: 'Contact', path: 'contact' },
+    { name: 'Home', path: 'home', highlight: false },
+    { name: 'About', path: 'about', highlight: false },
+    { name: 'Menu', path: 'menu', highlight: false },
+    { name: 'Offers 🔥', path: 'special-offers', highlight: true },
+    { name: 'Blog', path: 'blog', highlight: false },
+    { name: 'Contact', path: 'contact', highlight: false },
   ];
 
   return (
@@ -66,12 +72,16 @@ export default function Navigation({ currentPage, onNavigate }: NavigationProps)
               <button
                 key={item.path}
                 onClick={() => onNavigate(item.path)}
-                className={`transition-all duration-300 hover:text-amber-500 text-sm xl:text-base font-medium ${
-                  currentPage === item.path
+                className={`transition-all duration-300 text-sm xl:text-base font-medium ${
+                  item.highlight
+                    ? currentPage === item.path
+                      ? 'text-amber-400 font-bold'
+                      : 'text-amber-400 hover:text-amber-300 font-semibold'
+                    : currentPage === item.path
                     ? 'text-amber-500 font-bold border-b-2 border-amber-500 pb-1'
                     : isScrolled
-                    ? 'text-gray-700'
-                    : 'text-white'
+                    ? 'text-gray-700 hover:text-amber-500'
+                    : 'text-white hover:text-amber-300'
                 }`}
               >
                 {item.name}

@@ -24,6 +24,8 @@ interface CartContextType {
   getCartCount: () => number;
   getTaxAmount: () => number;
   getSubtotal: () => number;
+  couponCode: string | null;
+  setCouponCode: (code: string | null) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -35,10 +37,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return savedCart ? JSON.parse(savedCart) : [];
   });
 
+  const [couponCode, setCouponCodeState] = useState<string | null>(() => {
+    return localStorage.getItem('pulari_coupon') || null;
+  });
+
   // Save cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('pulari_cart', JSON.stringify(items));
   }, [items]);
+
+  useEffect(() => {
+    if (couponCode) localStorage.setItem('pulari_coupon', couponCode);
+    else localStorage.removeItem('pulari_coupon');
+  }, [couponCode]);
+
+  const setCouponCode = (code: string | null) => setCouponCodeState(code);
 
   const addToCart = (item: Omit<CartItem, 'quantity'>) => {
     setItems((currentItems) => {
@@ -83,6 +96,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const clearCart = () => {
     setItems([]);
+    setCouponCodeState(null);
   };
 
   const getSubtotal = () => {
@@ -90,12 +104,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const getTaxAmount = () => {
-    // 9% VAT (standard rate in Ireland for restaurant food)
-    return getSubtotal() * 0.09;
+    // Menu prices are VAT-inclusive (Irish norm). No VAT is added on top, so the
+    // amount shown equals the amount charged. The server is the source of truth.
+    return 0;
   };
 
   const getCartTotal = () => {
-    return getSubtotal() + getTaxAmount();
+    return getSubtotal();
   };
 
   const getCartCount = () => {
@@ -115,6 +130,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         getCartCount,
         getTaxAmount,
         getSubtotal,
+        couponCode,
+        setCouponCode,
       }}
     >
       {children}
@@ -122,6 +139,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useCart() {
   const context = useContext(CartContext);
   if (context === undefined) {

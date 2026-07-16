@@ -1,5 +1,10 @@
-import { useState } from 'react';
+import { useState, Fragment } from 'react';
 import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react';
+import SEO from '../components/SEO';
+import { useSettings } from '../contexts/SettingsContext';
+import { formatHoursLines, formatTime12, telHref } from '../lib/restaurantSettings';
+
+const DAYS_FULL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -11,6 +16,8 @@ export default function Contact() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const { settings } = useSettings();
+  const hoursLines = formatHoursLines(settings.openingHours);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +39,13 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen pt-24 bg-gray-50">
+      <SEO
+        title="Contact Us | Pulari Restaurant Temple Bar Dublin"
+        description="Contact Pulari Restaurant at The Design House, Crow St, Temple Bar, Dublin D02 F884. Call 083 068 1518 or email pularidesicafe@gmail.com. Open daily — Mon–Thu &amp; Sun 12–9 PM, Fri–Sat 12–10 PM."
+        canonical="/contact"
+        keywords="Pulari restaurant contact, Indian restaurant Dublin contact, Temple Street restaurant Dublin, Kerala restaurant Dublin phone, book table Indian restaurant Dublin"
+        breadcrumbs={[{ name: 'Contact', url: '/contact' }]}
+      />
       <section
         className="relative h-80 flex items-center justify-center bg-cover bg-center"
         style={{
@@ -55,9 +69,9 @@ export default function Contact() {
                 <MapPin className="text-amber-600 mt-1" size={24} />
                 <div>
                   <h3 className="font-semibold text-gray-800 mb-1">Address</h3>
-                  <p className="text-gray-600">Temple Street</p>
-                  <p className="text-gray-600">Dublin 2</p>
-                  <p className="text-gray-600">Ireland</p>
+                  <p className="text-gray-600">{settings.address.line1}</p>
+                  <p className="text-gray-600">{settings.address.city}</p>
+                  <p className="text-gray-600">{[settings.address.postcode, settings.address.country].filter(Boolean).join(', ')}</p>
                 </div>
               </div>
 
@@ -65,8 +79,8 @@ export default function Contact() {
                 <Phone className="text-amber-600 mt-1" size={24} />
                 <div>
                   <h3 className="font-semibold text-gray-800 mb-1">Phone</h3>
-                  <p className="text-gray-600">087 973 8186</p>
-                  <p className="text-gray-600 text-sm mt-1">Mon, Wed-Sun: 12:00 PM - 9:00 PM (Closed Tuesdays)</p>
+                  <a href={telHref(settings)} className="text-gray-600 hover:text-amber-600 transition-colors font-medium">{settings.phone}</a>
+                  <p className="text-gray-600 text-sm mt-1">{hoursLines.map((l) => `${l.days}: ${l.time}`).join(' · ')}</p>
                 </div>
               </div>
 
@@ -74,23 +88,35 @@ export default function Contact() {
                 <Mail className="text-amber-600 mt-1" size={24} />
                 <div>
                   <h3 className="font-semibold text-gray-800 mb-1">Email</h3>
-                  <p className="text-gray-600">info@pularirestaurant.ie</p>
-                  <p className="text-gray-600">reservations@pularirestaurant.ie</p>
+                  <a href={`mailto:${settings.email}`} className="text-gray-600 hover:text-amber-600 transition-colors">{settings.email}</a>
                 </div>
               </div>
 
               <div className="flex items-start space-x-4">
                 <Clock className="text-amber-600 mt-1" size={24} />
                 <div>
-                  <h3 className="font-semibold text-gray-800 mb-1">Opening Hours</h3>
-                  <p className="text-gray-600">Monday - Sunday: 11:00 AM - 3:00 AM</p>
+                  <h3 className="font-semibold text-gray-800 mb-2">Opening Hours</h3>
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-gray-600">
+                    {DAYS_FULL.map((dayName, i) => {
+                      const h = settings.openingHours.find((o) => o.dayOfWeek === i);
+                      const isWeekend = i === 5 || i === 6;
+                      const time = h && h.isOpen ? `${formatTime12(h.openTime)} – ${formatTime12(h.closeTime)}` : 'Closed';
+                      const cls = isWeekend ? 'font-semibold text-amber-700' : '';
+                      return (
+                        <Fragment key={dayName}>
+                          <span className={cls}>{dayName}</span>
+                          <span className={cls}>{time}</span>
+                        </Fragment>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
 
             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2381.6719582536593!2d-6.263935684231234!3d53.34244597997863!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48670e99733f3059%3A0x3a0d4b6c8c3b1c0!2sGrafton%20Street%2C%20Dublin%2C%20Ireland!5e0!3m2!1sen!2sus!4v1234567890"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2381.6!2d-6.2669!3d53.3448!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48670c6bbae9d63b%3A0xd17de3c2c0c12c7c!2sCrow%20St%2C%20Temple%20Bar%2C%20Dublin!5e0!3m2!1sen!2sie!4v1750030000000"
                 width="100%"
                 height="300"
                 style={{ border: 0 }}

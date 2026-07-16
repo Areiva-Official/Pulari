@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { User, Calendar, Mail, Phone, Clock, MapPin, Star } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../lib/supabase';
 
 interface Profile {
   full_name: string;
@@ -36,7 +35,7 @@ export default function Account({ onNavigate }: AccountProps) {
   const { user } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviews] = useState<Review[]>([]);
   const [activeTab, setActiveTab] = useState<'profile' | 'reservations' | 'reviews'>('profile');
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
@@ -51,76 +50,35 @@ export default function Account({ onNavigate }: AccountProps) {
       return;
     }
     loadData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const loadData = async () => {
     if (!user) return;
-
-    const { data: profileData } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .maybeSingle();
-
-    if (profileData) {
-      setProfile(profileData);
-      setFormData({
-        full_name: profileData.full_name || '',
-        phone: profileData.phone || '',
-      });
-    }
-
-    const { data: reservationsData } = await supabase
-      .from('reservations')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('date', { ascending: false });
-
-    if (reservationsData) {
-      setReservations(reservationsData);
-    }
-
-    const { data: reviewsData } = await supabase
-      .from('reviews')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
-
-    if (reviewsData) {
-      setReviews(reviewsData);
-    }
-
+    // Seed profile from Cognito session — backend profile sync will happen once API is wired
+    setProfile({
+      full_name: user.username ?? '',
+      phone: '',
+      email: user.email ?? user.username ?? '',
+    });
+    setFormData({
+      full_name: user.username ?? '',
+      phone: '',
+    });
     setLoading(false);
   };
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-
-    const { error } = await supabase
-      .from('profiles')
-      .update({
-        full_name: formData.full_name,
-        phone: formData.phone,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', user.id);
-
-    if (!error) {
-      setProfile({ ...profile!, ...formData });
-      setEditMode(false);
-    }
+    // Optimistic local update — will persist to backend once profile API is wired
+    setProfile({ ...profile!, ...formData });
+    setEditMode(false);
   };
 
   const handleCancelReservation = async (reservationId: string) => {
-    const { error } = await supabase
-      .from('reservations')
-      .update({ status: 'cancelled' })
-      .eq('id', reservationId);
-
-    if (!error) {
-      loadData();
-    }
+    // Optimistic cancel — will call backend API once wired
+    setReservations((prev) => prev.map((r) => r.id === reservationId ? { ...r, status: 'cancelled' } : r));
   };
 
   const getStatusColor = (status: string) => {

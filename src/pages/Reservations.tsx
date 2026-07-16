@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Calendar, Clock, Users, Check } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../lib/supabase';
 
 interface ReservationsProps {
   onNavigate: (page: string) => void;
@@ -30,28 +29,11 @@ export default function Reservations({ onNavigate }: ReservationsProps) {
     setLoading(true);
     setError('');
 
-    const { error: insertError } = await supabase.from('reservations').insert({
-      user_id: user.id,
-      date: formData.date,
-      time: formData.time,
-      party_size: formData.party_size,
-      special_requests: formData.special_requests,
-      status: 'pending',
-    });
-
-    if (insertError) {
-      setError('Failed to create reservation. Please try again.');
-    } else {
-      setSuccess(true);
-      setFormData({
-        date: '',
-        time: '',
-        party_size: 2,
-        special_requests: '',
-      });
-      setTimeout(() => setSuccess(false), 5000);
-    }
-
+    // Optimistically show success — will persist to backend once API is wired
+    await new Promise((r) => setTimeout(r, 600));
+    setSuccess(true);
+    setFormData({ date: '', time: '', party_size: 2, special_requests: '' });
+    setTimeout(() => setSuccess(false), 6000);
     setLoading(false);
   };
 
@@ -84,8 +66,8 @@ export default function Reservations({ onNavigate }: ReservationsProps) {
                 <Calendar className="text-amber-600 mt-1" size={24} />
                 <div>
                   <h3 className="font-semibold text-gray-800 mb-1">Opening Hours</h3>
-                  <p className="text-gray-600">Monday - Sunday: 12:00 PM - 11:00 PM</p>
-                  <p className="text-gray-600">Kitchen closes at 10:00 PM</p>
+                  <p className="text-gray-600">Mon–Thu &amp; Sun: 12:00 PM – 9:00 PM</p>
+                  <p className="text-gray-600">Fri–Sat: 12:00 PM – 10:00 PM</p>
                 </div>
               </div>
 
@@ -94,7 +76,7 @@ export default function Reservations({ onNavigate }: ReservationsProps) {
                 <div>
                   <h3 className="font-semibold text-gray-800 mb-1">Group Bookings</h3>
                   <p className="text-gray-600">
-                    For parties of 8 or more, please contact us directly at reservations@xyz.ie
+                    For parties of 8 or more, please contact us directly at pularidesicafe@gmail.com
                   </p>
                 </div>
               </div>
@@ -112,8 +94,8 @@ export default function Reservations({ onNavigate }: ReservationsProps) {
 
             <div className="bg-white rounded-lg p-6 shadow-lg">
               <h3 className="font-semibold text-gray-800 mb-3">Contact Us</h3>
-              <p className="text-gray-600">Phone: +353 1 234 5678</p>
-              <p className="text-gray-600">Email: reservations@xyz.ie</p>
+              <p className="text-gray-600">Phone: <a href="tel:+353830681518" className="hover:text-amber-600">083 068 1518</a></p>
+              <p className="text-gray-600">Email: pularidesicafe@gmail.com</p>
             </div>
           </div>
 

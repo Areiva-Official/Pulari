@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Leaf, Wheat, ShoppingCart, Check, ArrowRight } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
+import { menuApi } from '../lib/api';
+import SEO from '../components/SEO';
 
 interface MenuProps {
   onNavigate?: (page: string) => void;
@@ -86,7 +88,7 @@ export default function Menu({ onNavigate }: MenuProps) {
     }, 2000);
   };
 
-  const menuCategories: MenuCategory[] = [
+  const fallbackMenuCategories: MenuCategory[] = [
     {
       id: '1',
       name: 'APPETIZERS',
@@ -464,11 +466,88 @@ export default function Menu({ onNavigate }: MenuProps) {
     },
   ];
 
+  // Live menu from the backend (DynamoDB via API Gateway). Admin edits appear
+  // here without a rebuild. Falls back to the built-in menu if the API is empty
+  // or unavailable, so the page always renders something.
+  const [menuCategories, setMenuCategories] = useState<MenuCategory[]>(fallbackMenuCategories);
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const [catsRes, itemsRes] = await Promise.all([
+          menuApi.getCategories(),
+          menuApi.getItems(),
+        ]);
+        if (!active) return;
+
+        const cats = catsRes.data ?? [];
+        const items = itemsRes.data ?? [];
+        if (cats.length === 0) return; // keep the fallback menu
+
+        const mapped: MenuCategory[] = cats
+          .filter((c) => c.isActive)
+          .sort((a, b) => a.displayOrder - b.displayOrder)
+          .map((c) => ({
+            id: c.id,
+            name: c.name,
+            description: c.description ?? '',
+            items: items
+              .filter((it) => it.categoryId === c.id && it.isAvailable)
+              .sort((a, b) => a.displayOrder - b.displayOrder)
+              .map((it) => ({
+                id: it.id,
+                name: it.name,
+                description: it.description,
+                price: it.price,
+                image_url: it.imageUrl,
+                is_vegetarian: it.isVegetarian,
+                is_vegan: it.isVegan,
+                is_gluten_free: it.isGlutenFree,
+              })),
+          }))
+          .filter((c) => c.items.length > 0);
+
+        if (mapped.length > 0) {
+          setMenuCategories(mapped);
+          setSelectedCategory((current) =>
+            mapped.some((c) => c.id === current) ? current : mapped[0].id
+          );
+        }
+      } catch {
+        // Network/parse error — keep the fallback menu.
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const selectedCategoryData = menuCategories.find(cat => cat.id === selectedCategory);
 
   return (
     <div className="min-h-screen bg-gray-50 pt-16 sm:pt-20">
-      {/* Hero Section */}
+      <SEO
+        title="Menu | Kerala & South Indian Food Dublin"
+        description="Explore Pulari Restaurant's full menu — dosas, biryanis, Kerala curries, fish dishes, vegetarian options and more. Authentic South Indian cuisine at Temple Street, Dublin 2."
+        canonical="/menu"
+        keywords="Kerala menu Dublin, South Indian food menu Dublin, Indian restaurant menu Temple Street, dosa Dublin, biryani Dublin, Kerala curry Dublin"
+        breadcrumbs={[{ name: 'Menu', url: '/menu' }]}
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          name: 'Pulari Restaurant Menu',
+          description: 'Authentic Kerala and South Indian dishes at Pulari Restaurant, Temple Street Dublin',
+          url: 'https://www.pulari.ie/menu',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Samosa', description: 'Handmade pastry stuffed with spiced potatoes and peas', offers: { '@type': 'Offer', price: '4.99', priceCurrency: 'EUR' } },
+            { '@type': 'ListItem', position: 2, name: 'Masala Dosa', description: 'Crispy South Indian pancake filled with spiced potato and onion filling', offers: { '@type': 'Offer', price: '9.99', priceCurrency: 'EUR' } },
+            { '@type': 'ListItem', position: 3, name: 'Malabar Chicken Biriyani', description: 'Fragrant Malabar-style biryani with tender chicken and basmati rice', offers: { '@type': 'Offer', price: '15.99', priceCurrency: 'EUR' } },
+            { '@type': 'ListItem', position: 4, name: 'House Boat Fish Curry', description: 'Fresh fish simmered in spicy tangy coconut gravy with Kerala kudampuli', offers: { '@type': 'Offer', price: '13.99', priceCurrency: 'EUR' } },
+            { '@type': 'ListItem', position: 5, name: 'Paneer Butter Masala', description: 'Fresh cottage cheese in a rich creamy tomato-based sauce', offers: { '@type': 'Offer', price: '12.99', priceCurrency: 'EUR' } },
+          ],
+        }}
+      />
       <section
         className="relative h-48 sm:h-64 md:h-80 flex items-center justify-center bg-cover bg-center"
         style={{
@@ -705,7 +784,7 @@ export default function Menu({ onNavigate }: MenuProps) {
                   onClick={() => onNavigate?.('cart')}
                   className="flex items-center space-x-2 bg-white text-amber-700 px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 hover:bg-amber-50"
                 >
-                  <span className="text-sm sm:text-base">Proceed to Checkout</span>
+                  <span className="text-sm sm:text-base">View Cart &amp; Order</span>
                   <ArrowRight size={20} className="animate-bounce-subtle" />
                 </button>
               </div>

@@ -1,24 +1,34 @@
-# Pulari Restaurant Website
+# Pulari Restaurant
 
-A modern, responsive restaurant website built with React, TypeScript, Vite, and Tailwind CSS.
+A modern, full‑stack website for **Pulari Restaurant** — authentic Kerala & South Indian cuisine in Temple Bar, Dublin. The project includes a public marketing site, an online menu and cart, and a full admin dashboard (menu, orders, reservations, offers, coupons, blog, reviews and settings) backed by a serverless AWS API.
 
 ## Features
 
-- 🍽️ **Interactive Menu** - Kerala cuisine menu with images and allergen information
-- 🛒 **Shopping Cart** - Production-ready cart with localStorage persistence
-- 📱 **Fully Responsive** - Optimized for all screen sizes
-- 💬 **WhatsApp Integration** - Floating chat button for direct customer contact
-- 🎨 **Beautiful UI** - Gradient designs, animations, and smooth transitions
-- 🔐 **Authentication Ready** - User account system with Supabase integration
+- 🍽️ **Interactive Menu** — categorised Kerala menu with dietary flags and images
+- 🛒 **Cart & Ordering** — cart with persistence; ordering via delivery partners
+- 📝 **Blog** — articles managed from the admin and served via the API
+- 🗓️ **Reservations & Contact** — table booking and enquiry forms
+- 🔐 **Authentication** — email/password sign‑in with email OTP verification (Amazon Cognito)
+- 🛠️ **Admin Dashboard** — manage menu, orders, reservations, offers, coupons, blog, reviews and settings
+- 📱 **Fully Responsive** — optimised for mobile, tablet and desktop
+- 🔎 **SEO‑ready** — per‑page metadata, Open Graph tags and JSON‑LD structured data
 
 ## Tech Stack
 
-- **Frontend**: React 18 + TypeScript
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS
-- **Icons**: Lucide React
-- **Backend**: Supabase (configured)
-- **Deployment**: Vercel
+**Frontend**
+
+- React 18 + TypeScript
+- Vite (build tool)
+- Tailwind CSS
+- Lucide React (icons)
+
+**Backend (AWS, serverless)**
+
+- API Gateway (HTTP API) → AWS Lambda (Node.js, ESM)
+- Amazon DynamoDB (data store)
+- Amazon Cognito (authentication & admin authorisation)
+- Amazon S3 + CloudFront (static hosting & CDN)
+- Stripe (payments — optional, enabled when keys are configured)
 
 ## Getting Started
 
@@ -32,72 +42,75 @@ A modern, responsive restaurant website built with React, TypeScript, Vite, and 
 # Install dependencies
 npm install
 
-# Start development server
+# Start the dev server
 npm run dev
 
-# Build for production
+# Type-check and build for production
 npm run build
 
-# Preview production build
-npm preview
+# Preview the production build
+npm run preview
 ```
 
-## Deployment on Vercel
+### Environment Variables
 
-### Option 1: Deploy via Vercel Dashboard
-
-1. Go to [vercel.com](https://vercel.com) and sign in
-2. Click "Add New Project"
-3. Import your GitHub repository: `ANSHU-Ireland/fais-hotel-2`
-4. Vercel will auto-detect Vite configuration
-5. Click "Deploy"
-
-### Option 2: Deploy via Vercel CLI
+Create a `.env` file in the project root. **Do not commit real values** — keep `.env` out of version control. Only the variable *names* are documented here:
 
 ```bash
-# Install Vercel CLI
-npm i -g vercel
+# API
+VITE_API_BASE_URL=        # HTTPS endpoint of the API Gateway stage
 
-# Deploy
-vercel
+# Auth (Amazon Cognito)
+VITE_AWS_REGION=
+VITE_COGNITO_USER_POOL_ID=
+VITE_COGNITO_CLIENT_ID=
 
-# Deploy to production
-vercel --prod
+# Optional integrations
+VITE_STRIPE_PUBLISHABLE_KEY=   # publishable key only — never the secret key
+VITE_PINPOINT_APP_ID=          # analytics (optional)
 ```
 
-### Environment Variables (Optional)
-
-If using Supabase features, add these in Vercel dashboard:
-
-- `VITE_SUPABASE_URL` - Your Supabase project URL
-- `VITE_SUPABASE_ANON_KEY` - Your Supabase anon key
+If `VITE_API_BASE_URL` is left empty, the frontend runs in a local mock mode so the UI works end‑to‑end without a backend.
 
 ## Project Structure
 
 ```
 src/
-├── components/       # Reusable components (Navigation, etc.)
-├── contexts/        # React contexts (Auth, Cart)
-├── pages/          # Page components (Home, Menu, Cart, etc.)
-├── lib/            # Utilities and configurations
-└── assets/         # Images and static files
+├── components/      # Reusable UI (Navigation, SEO, etc.)
+├── contexts/        # React contexts (Auth, Cart, Settings)
+├── pages/           # Public pages (Home, Menu, Blog, Contact, …)
+├── admin/           # Admin dashboard (pages, hooks, data)
+├── lib/             # API client and utilities
+└── types/           # Shared TypeScript types
+
+lambda/
+├── src/handlers/    # One handler per domain (menu, orders, blog, …)
+├── src/shared/      # Auth, DynamoDB, router, schemas, responses
+└── seed*.mjs        # Local data seeding scripts
+
+scripts/             # Infrastructure / deployment helper scripts
 ```
 
-## Configuration Files
+## Backend & Deployment
 
-- `vercel.json` - Vercel deployment configuration with SPA routing
-- `vite.config.ts` - Vite build configuration
-- `tailwind.config.js` - Tailwind CSS customization
-- `tsconfig.json` - TypeScript configuration
+The backend is a set of Lambda handlers fronted by an API Gateway HTTP API, with DynamoDB for storage and Cognito for auth. Helper scripts under `scripts/` provision and deploy the infrastructure (DynamoDB tables, Lambda functions, routes, hosting). Configure your own AWS account, region and resource identifiers via environment variables and your AWS CLI profile — no account‑specific identifiers or credentials are stored in this repository.
+
+```bash
+# Build the Lambda bundles
+cd lambda && npm install && npm run build
+
+# Build the frontend
+npm run build
+```
 
 ## Restaurant Information
 
 - **Name**: Pulari Restaurant
-- **Location**: Temple Street, Dublin 2, Ireland
-- **Phone**: 087 973 8186
-- **Hours**: Monday - Sunday, 11:00 AM - 3:00 AM
-- **Email**: info@pularirestaurant.ie
+- **Location**: The Design House, Crow St, Temple Bar, Dublin, D02 F884
+- **Phone**: 083 068 1518
+- **Hours**: Sun–Thu 12 PM – 9 PM · Fri–Sat 12 PM – 10 PM
+- **Website**: https://www.pulari.ie
 
 ## License
 
-© 2025 Pulari Restaurant. All rights reserved.
+© 2026 Pulari Restaurant. All rights reserved.

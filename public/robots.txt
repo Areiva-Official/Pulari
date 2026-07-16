@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Disallow admin/private pages
+Disallow: /account
+Disallow: /cart
+Disallow: /login
+Disallow: /admin
+
+Sitemap: https://www.pulari.ie/sitemap.xml

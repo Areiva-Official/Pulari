@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useCart } from '../contexts/CartContext';
-import { Trash2, Plus, Minus, ShoppingBag, CreditCard, Lock, ChevronRight, Leaf, Wheat, AlertCircle, Phone, ExternalLink } from 'lucide-react';
+import { couponsApi } from '../lib/api';
+import { Trash2, Plus, Minus, ShoppingBag, ChevronRight, Leaf, Wheat, AlertCircle, Phone, ExternalLink } from 'lucide-react';
 
 interface CartProps {
   onNavigate: (page: string) => void;
@@ -13,27 +14,37 @@ export default function Cart({ onNavigate }: CartProps) {
     updateQuantity,
     updateSpecialInstructions,
     clearCart,
-    getCartTotal,
     getCartCount,
-    getTaxAmount,
     getSubtotal,
+    couponCode,
+    setCouponCode,
   } = useCart();
 
-  const [promoCode, setPromoCode] = useState('');
-  const [appliedPromo, setAppliedPromo] = useState<string | null>(null);
+  const [promoCode, setPromoCode] = useState(couponCode ?? '');
+  const [promoError, setPromoError] = useState<string | null>(null);
+  const [promoChecking, setPromoChecking] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
 
-  const handleApplyPromo = () => {
-    // Placeholder for promo code logic - to be implemented with backend
-    if (promoCode.toUpperCase() === 'WELCOME10') {
-      setAppliedPromo(promoCode);
-      // In production, this would validate with backend
+  const handleApplyPromo = async () => {
+    const code = promoCode.trim().toUpperCase();
+    if (!code) return;
+    setPromoChecking(true);
+    setPromoError(null);
+    const res = await couponsApi.validate(code, getSubtotal());
+    setPromoChecking(false);
+    if (res.error || !res.data) {
+      setCouponCode(null);
+      setPromoError(res.error ?? 'Invalid or expired code.');
+      return;
     }
+    // Valid — store the code; the server re-validates and applies it at checkout.
+    setCouponCode(code);
   };
 
-  const handleCheckout = () => {
-    // Placeholder for checkout - to be implemented with payment gateway
-    setShowCheckout(true);
+  const handleRemovePromo = () => {
+    setCouponCode(null);
+    setPromoCode('');
+    setPromoError(null);
   };
 
   if (items.length === 0) {
@@ -227,19 +238,36 @@ export default function Cart({ onNavigate }: CartProps) {
                     value={promoCode}
                     onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
                     placeholder="ENTER CODE"
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent uppercase"
+                    disabled={!!couponCode}
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent uppercase disabled:bg-gray-100"
                   />
-                  <button
-                    onClick={handleApplyPromo}
-                    className="px-4 py-2 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-700 transition-colors duration-200"
-                  >
-                    Apply
-                  </button>
+                  {couponCode ? (
+                    <button
+                      onClick={handleRemovePromo}
+                      className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200"
+                    >
+                      Remove
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleApplyPromo}
+                      disabled={promoChecking}
+                      className="px-4 py-2 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-700 transition-colors duration-200 disabled:opacity-60"
+                    >
+                      {promoChecking ? 'Checking…' : 'Apply'}
+                    </button>
+                  )}
                 </div>
-                {appliedPromo && (
+                {couponCode && (
                   <p className="text-green-600 text-sm mt-2 flex items-center gap-1">
                     <AlertCircle size={14} />
-                    Promo code applied!
+                    Code “{couponCode}” applied — discount shown at checkout.
+                  </p>
+                )}
+                {promoError && (
+                  <p className="text-red-600 text-sm mt-2 flex items-center gap-1">
+                    <AlertCircle size={14} />
+                    {promoError}
                   </p>
                 )}
               </div>
@@ -250,36 +278,27 @@ export default function Cart({ onNavigate }: CartProps) {
                   <span>Subtotal</span>
                   <span className="font-semibold">€{getSubtotal().toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-gray-700">
-                  <span>VAT (9%)</span>
-                  <span className="font-semibold">€{getTaxAmount().toFixed(2)}</span>
-                </div>
-                {appliedPromo && (
-                  <div className="flex justify-between text-green-600">
-                    <span>Discount</span>
-                    <span className="font-semibold">-€0.00</span>
-                  </div>
-                )}
                 <div className="flex justify-between text-xl font-bold text-gray-900 pt-2">
                   <span>Total</span>
-                  <span className="text-amber-600">€{getCartTotal().toFixed(2)}</span>
+                  <span className="text-amber-600">€{getSubtotal().toFixed(2)}</span>
                 </div>
+                <p className="text-xs text-gray-400">Prices include VAT</p>
               </div>
 
-              {/* Checkout Button */}
+              {/* Order Now — opens delivery partners modal */}
               <button
-                onClick={handleCheckout}
+                onClick={() => setShowCheckout(true)}
                 className="w-full bg-gradient-to-r from-amber-600 to-amber-700 text-white py-4 rounded-xl font-bold text-lg hover:from-amber-700 hover:to-amber-800 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
               >
                 <ShoppingBag size={20} />
-                Choose Order Method
+                Order Now
               </button>
 
               {/* Order Info */}
               <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 p-4 rounded-lg">
                 <AlertCircle size={20} className="text-amber-600 flex-shrink-0" />
                 <p>
-                  Order via Deliveroo, Uber Eats, or call us for pickup
+                  Order via Deliveroo, Uber Eats, Just Eat or call us directly for pickup
                 </p>
               </div>
             </div>
@@ -342,10 +361,29 @@ export default function Cart({ onNavigate }: CartProps) {
                 <ExternalLink size={20} />
               </button>
 
+              {/* Just Eat */}
+              <button
+                onClick={() => {
+                  window.open('https://www.just-eat.ie/restaurants-pulari-authentic-desi-kitchen-dublin', '_blank');
+                }}
+                className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                    <span className="text-orange-500 font-bold text-lg">JE</span>
+                  </div>
+                  <div className="text-left">
+                    <div className="font-bold">Order on Just Eat</div>
+                    <div className="text-xs text-orange-100">Delivery to your door</div>
+                  </div>
+                </div>
+                <ExternalLink size={20} />
+              </button>
+
               {/* Call for Pickup */}
               <button
                 onClick={() => {
-                  window.location.href = 'tel:+353879738186';
+                  window.location.href = 'tel:+353830681518';
                 }}
                 className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
               >
@@ -355,7 +393,7 @@ export default function Cart({ onNavigate }: CartProps) {
                   </div>
                   <div className="text-left">
                     <div className="font-bold">Call for Pickup</div>
-                    <div className="text-xs text-amber-100">087 973 8186</div>
+                    <div className="text-xs text-amber-100">083 068 1518</div>
                   </div>
                 </div>
                 <ChevronRight size={20} />

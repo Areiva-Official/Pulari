@@ -9,4 +9,12 @@ export const awsConfig = {
       },
     },
   },
+  Analytics: {
+    Pinpoint: {
+      // Project: pulari-analytics (eu-west-1)
+      // Admins group: cognito → eu-west-1_OaOEegHaY → admins
+      appId: (import.meta.env.VITE_PINPOINT_APP_ID as string | undefined) ?? '',
+      region: 'eu-west-1',
+    },
+  },
 };

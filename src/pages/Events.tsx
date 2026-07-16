@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Calendar, Clock, MapPin } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 
 interface Event {
   id: string;
@@ -12,28 +11,9 @@ interface Event {
 }
 
 export default function Events() {
-  const [events, setEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading] = useState(false);
 
-  useEffect(() => {
-    loadEvents();
-  }, []);
-
-  const loadEvents = async () => {
-    const { data } = await supabase
-      .from('events')
-      .select('*')
-      .eq('is_active', true)
-      .gte('event_date', new Date().toISOString().split('T')[0])
-      .order('event_date');
-
-    if (data) {
-      setEvents(data);
-    }
-    setLoading(false);
-  };
-
-  const sampleEvents = [
+  const sampleEvents: Event[] = [
     {
       id: '1',
       title: 'Wine Tasting Evening',
@@ -68,7 +48,7 @@ export default function Events() {
     },
   ];
 
-  const displayEvents = events.length > 0 ? events : sampleEvents;
+  const displayEvents = sampleEvents;
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);

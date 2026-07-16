@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
+import SEO from '../components/SEO';
 
 export default function Gallery() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -57,6 +58,13 @@ export default function Gallery() {
 
   return (
     <div className="min-h-screen pt-24 bg-gray-50">
+      <SEO
+        title="Gallery | Pulari Restaurant Dublin"
+        description="Browse the Pulari Restaurant gallery — authentic Kerala and South Indian dishes, restaurant ambience, and food photography from our Temple Street, Dublin 2 restaurant."
+        canonical="/gallery"
+        keywords="Pulari restaurant photos Dublin, Kerala food photos Dublin, Indian restaurant gallery Dublin, South Indian restaurant interior Dublin"
+        breadcrumbs={[{ name: 'Gallery', url: '/gallery' }]}
+      />
       <section
         className="relative h-80 flex items-center justify-center bg-cover bg-center"
         style={{
