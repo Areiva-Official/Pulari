@@ -206,8 +206,9 @@ export default function AdminMenu() {
   };
   const doDelete = async () => {
     if (!deleteId) return;
-    const ok = await deleteItem(deleteId);
-    if (ok) setDeleteId(null);
+    const id = deleteId;
+    setDeleteId(null); // close dialog immediately — optimistic
+    await deleteItem(id);
   };
   const catName = (id: string) => categoryLabel(id, data.categories.find(c => c.id === id)?.name);
 

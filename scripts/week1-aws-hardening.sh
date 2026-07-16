@@ -216,7 +216,7 @@ HEADERS_POLICY_CONFIG=$(cat <<'POLICY_EOF'
     },
     "ContentSecurityPolicy": {
       "Override": true,
-      "ContentSecurityPolicy": "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.amazonaws.com https://api.stripe.com https://cognito-idp.eu-west-1.amazonaws.com; frame-src https://js.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self'"
+      "ContentSecurityPolicy": "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.amazonaws.com https://*.s3.eu-west-1.amazonaws.com https://api.stripe.com https://cognito-idp.eu-west-1.amazonaws.com; frame-src https://js.stripe.com; object-src 'none'; base-uri 'self'; form-action 'self'"
     }
   },
   "CustomHeadersConfig": {
