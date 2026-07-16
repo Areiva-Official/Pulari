@@ -60,9 +60,10 @@ async function presign(event: APIGatewayProxyEventV2, origin?: string) {
     Bucket: BUCKET,
     Key: key,
     ContentType: contentType,
-    // Enforce max 8 MB via content-length-range in a bucket policy; we just
-    // limit by signed URL expiry (5 min) — sufficient for a low-traffic admin.
-    CacheControl: 'public, max-age=31536000, immutable',
+    // Do NOT include CacheControl here — any header added to the command is
+    // baked into the pre-signed URL signature. The browser PUT must then send
+    // that exact header or S3 returns SignatureDoesNotMatch.
+    // Cache headers are handled by a CloudFront cache policy instead.
   });
 
   const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 300 });
