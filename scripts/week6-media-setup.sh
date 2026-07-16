@@ -233,9 +233,9 @@ AUTHZ_ID=$(aws apigatewayv2 get-authorizers --api-id "$API_ID" --region "$REGION
 
 # Create route (idempotent)
 EXISTING_ROUTE=$(aws apigatewayv2 get-routes --api-id "$API_ID" --region "$REGION" \
-  --query "Items[?RouteKey=='POST /admin/uploads/presign'].RouteId | [0]" --output text)
+  --query "Items[?RouteKey=='POST /admin/uploads/presign'] | length(@)" --output text)
 
-if [ -z "$EXISTING_ROUTE" ] || [ "$EXISTING_ROUTE" = "None" ]; then
+if [ "$EXISTING_ROUTE" = "0" ]; then
   aws apigatewayv2 create-route \
     --api-id "$API_ID" \
     --route-key "POST /admin/uploads/presign" \
