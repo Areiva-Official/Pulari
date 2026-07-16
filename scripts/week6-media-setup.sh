@@ -100,7 +100,7 @@ CORS_CONFIG=$(cat <<EOF
         "http://localhost:5173",
         "http://localhost:4173"
       ],
-      "AllowedMethods": ["GET", "PUT", "HEAD"],
+      "AllowedMethods": ["GET", "PUT", "HEAD", "POST", "DELETE"],
       "AllowedHeaders": ["*"],
       "ExposeHeaders": ["ETag"],
       "MaxAgeSeconds": 3600
