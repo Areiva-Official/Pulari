@@ -43,6 +43,58 @@ import masalaTeaImage from '../assets/gallery/MASALA TEA.jpg';
 import cardamomTeaImage from '../assets/gallery/CARDAMOM TEA.jpg';
 import filterCoffeeImage from '../assets/gallery/FILTER COFFEE.jpg';
 
+// Maps the canonical item name (as stored in DynamoDB) to its locally-bundled
+// image. Used as a fallback when the API returns imageUrl: "" — which is the
+// case for all existing items whose images were never uploaded to S3.
+// New items added by the admin without an uploaded image show the placeholder.
+const LOCAL_IMAGES: Record<string, string> = {
+  'SAMOSA': samosaImage,
+  'MEDU VADA': meduVadaImage,
+  'NADAN MASALA OMELETTE': masalaOmeletteImage,
+  'KOTTAYAM CHICKEN FRY': kottayamChickenImage,
+  'BANANA FRY': bananaFryImage,
+  'PAZHAM PORI': bananaFryImage,
+  'VENADU KONCHU FRY': venaduKonchuImage,
+  "PENNAMA'S KOCHU FRY": venaduKonchuImage,
+  'GHEE ROAST': gheeRoastImage,
+  'MASALA DOSA': masalaDosaImage,
+  'SET DOSA': setDosaImage,
+  'MYLAPORE EGG ROAST': mylaporeEggImage,
+  'NAMAKKAL EGG ROAST': mylaporeEggImage,
+  'HOUSE BOAT FISH CURRY': houseBoatFishImage,
+  'KERALA FISH CURRY': houseBoatFishImage,
+  'NADAN POTHU ROAST': nadanPothuRoastImage,
+  'HIGH RANGE POTHU ROAST': nadanPothuRoastImage,
+  'HI RANGE BEEF ULARTHIYATHU': hiRangeBeefImage,
+  'SHAPPILE BEEF FRY': hiRangeBeefImage,
+  'NADAN CHICKEN PORICHADHU(on the bone)': kottayamChickenImage,
+  'VEETTILE KOZHI CURRY': veetileKozhiImage,
+  'VARUTHARACHA NADAN CHICKEN CURRY': veetileKozhiImage,
+  'KONCHU MANGO CURRY': konchuMangoImage,
+  'KUTTANADAN KONCHU MASALA': konchuMangoImage,
+  'MALABAR CHICKEN BIRIYANI': malabarChickenImage,
+  'NADAN FRIED CHICKEN BIRIYANI': malabarChickenImage,
+  'MALABAR BEEF BIRIYANI': malabarBeefImage,
+  'NADAN BEEF BIRIYANI': malabarBeefImage,
+  'KAPPA PUZHUKKU': kappaPuzhukuImage,
+  'OLD DELHI STYLE BUTTER CHICKEN': butterChickenImage,
+  'HOME STYLE BUTTER CHICKEN': butterChickenImage,
+  'PANEER BUTTER MASALA': paneerButterImage,
+  'KERALA PARATHA': keralaParathaImage,
+  'APPAM': appamImage,
+  'BUTTER NAAN': butterNaanImage,
+  'NEYY CHORU': neyyChoruImage,
+  'STEAM RICE': steamRiceImage,
+  'PULAO RICE': pulaoRiceImage,
+  'RAITA': raitaImage,
+  'MANGO LASSI': mangoLassiImage,
+  'GULAB JAMUN': gulabJamunImage,
+  'NADAN CHAI': nadanChaiImage,
+  'MASALA TEA': masalaTeaImage,
+  'CARDAMOM TEA': cardamomTeaImage,
+  'FILTER COFFEE': filterCoffeeImage,
+};
+
 interface MenuItem {
   id: string;
   name: string;
@@ -500,7 +552,7 @@ export default function Menu({ onNavigate }: MenuProps) {
                 name: it.name,
                 description: it.description,
                 price: it.price,
-                image_url: it.imageUrl,
+                image_url: it.imageUrl || LOCAL_IMAGES[it.name] || '',
                 is_vegetarian: it.isVegetarian,
                 is_vegan: it.isVegan,
                 is_gluten_free: it.isGlutenFree,
