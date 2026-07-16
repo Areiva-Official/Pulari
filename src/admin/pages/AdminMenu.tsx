@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
-import { AlertTriangle, Check, Edit2, Leaf, Plus, Search, Trash2, X } from 'lucide-react';
+import { useMemo, useRef, useState } from 'react';
+import { AlertTriangle, Check, Edit2, Leaf, Loader2, Plus, Search, Trash2, Upload, X } from 'lucide-react';
 import type { MenuCategory, MenuItem } from '../../types';
+import { uploadsApi } from '../../lib/api';
 import { useMenuAdminData } from '../hooks/useAdminData';
 
 // Friendly names for the fixed menu category ids. Used as a fallback so the
@@ -33,7 +34,33 @@ function ItemModal({ item, categories, onSave, onClose }: { item: MenuItem | nul
   const init: ItemForm = item ? { categoryId: item.categoryId, name: item.name, description: item.description, price: item.price, imageUrl: item.imageUrl ?? '', isVegetarian: item.isVegetarian, isVegan: item.isVegan, isGlutenFree: item.isGlutenFree, isAvailable: item.isAvailable } : BLANK;
   const [form, setForm] = useState<ItemForm>(init);
   const [priceStr, setPriceStr] = useState(item ? item.price.toFixed(2) : '');
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const set = (k: keyof ItemForm, v: unknown) => setForm(f => ({ ...f, [k]: v }));
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) {
+      setUploadError('Image must be under 10 MB'); return;
+    }
+    setUploadError(null);
+    setUploading(true);
+    try {
+      const presignRes = await uploadsApi.presign(file.name, file.type);
+      if (presignRes.error || !presignRes.data?.uploadUrl) {
+        throw new Error(presignRes.error ?? 'Could not get upload URL');
+      }
+      await uploadsApi.uploadFile(presignRes.data.uploadUrl, file);
+      set('imageUrl', presignRes.data.publicUrl);
+    } catch (err) {
+      setUploadError((err as Error).message);
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -67,15 +94,46 @@ function ItemModal({ item, categories, onSave, onClose }: { item: MenuItem | nul
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Image</label>
-            <input type="url" value={form.imageUrl} onChange={e => set('imageUrl', e.target.value)} placeholder="https://example.com/dish.jpg" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:border-transparent" />
-            {form.imageUrl?.trim() ? (
-              <div className="mt-2 flex items-center gap-3">
-                <img src={form.imageUrl} alt="Preview" className="w-20 h-20 object-cover rounded-lg border border-gray-200" onError={e => { (e.currentTarget as HTMLImageElement).style.opacity = '0.3'; }} />
-                <p className="text-xs text-gray-400">Preview · paste a direct link to a photo of the dish</p>
-              </div>
-            ) : (
-              <p className="text-xs text-gray-400 mt-1">Optional. Paste a direct image link (e.g. from your photo host).</p>
-            )}
+            {/* Hidden native file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+            <div className="flex items-center gap-3">
+              {/* Upload button */}
+              <button
+                type="button"
+                disabled={uploading}
+                onClick={() => fileInputRef.current?.click()}
+                className="flex items-center gap-2 px-4 py-2 border-2 border-dashed border-amber-400 rounded-lg text-sm font-medium text-amber-700 hover:bg-amber-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {uploading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
+                {uploading ? 'Uploading…' : 'Upload from device'}
+              </button>
+              {/* Current image preview */}
+              {form.imageUrl?.trim() && (
+                <div className="relative group">
+                  <img
+                    src={form.imageUrl}
+                    alt="Preview"
+                    className="w-16 h-16 object-cover rounded-lg border border-gray-200"
+                    onError={e => { (e.currentTarget as HTMLImageElement).style.opacity = '0.3'; }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => set('imageUrl', '')}
+                    className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X size={10} />
+                  </button>
+                </div>
+              )}
+            </div>
+            {uploadError && <p className="text-xs text-red-600 mt-1">{uploadError}</p>}
+            <p className="text-xs text-gray-400 mt-1">JPEG · PNG · WebP · GIF — max 10 MB. Stored in your AWS S3 bucket.</p>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Dietary Flags</label>

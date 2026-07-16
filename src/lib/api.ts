@@ -412,6 +412,36 @@ export const usersApi = {
   },
 };
 
+// ─── UPLOADS (ADMIN) ────────────────────────────────────────────────────────
+// Flow: presign() → browser PUT → publicUrl saved as imageUrl in DynamoDB.
+
+export const uploadsApi = {
+  /** Request a pre-signed S3 PUT URL. Returns the URL to PUT to and the
+   *  permanent public URL to store as imageUrl. */
+  async presign(
+    filename: string,
+    contentType: string
+  ): Promise<ApiResponse<{ uploadUrl: string; publicUrl: string }>> {
+    if (IS_MOCK)
+      return { data: { uploadUrl: '', publicUrl: '' }, error: null, status: 200 };
+    return request<{ uploadUrl: string; publicUrl: string }>(
+      '/admin/uploads/presign',
+      { method: 'POST', body: JSON.stringify({ filename, contentType }) }
+    );
+  },
+
+  /** PUT the file bytes directly to S3 using the pre-signed URL.
+   *  No auth header — the signature is embedded in the URL. */
+  async uploadFile(uploadUrl: string, file: File): Promise<void> {
+    const res = await fetch(uploadUrl, {
+      method: 'PUT',
+      body: file,
+      headers: { 'Content-Type': file.type },
+    });
+    if (!res.ok) throw new Error(`S3 upload failed: ${res.status}`);
+  },
+};
+
 // ─── ANALYTICS (ADMIN) ────────────────────────────────────────────────────────
 
 export const analyticsApi = {
